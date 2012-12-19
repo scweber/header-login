@@ -1,9 +1,10 @@
-/**
- *
- * @package Auto_Login
- * @version 1.1
- */
-/*
+Auto-Login
+============
+
+ @package Auto_Login
+ @version 1.1
+
+
 Plugin Name: Auto Login
 Plugin URI: https://github.com/scweber/Auto-Login
 Description: This plugin will automatically log a user into WordPress if they are logged into Access Manager.
