@@ -109,16 +109,14 @@ function al_user_login() {
 			$user_id = username_exists($user_login); // Is is a valid, current WP user?
 			remove_filter('authenticate', 'wp_authenticate_username_password', 20, 3); // Remove filter
 			
-			if(!$user_id) { // Not a current WP user
-				$userdata = al_create_new_user($user_id, $user_login, $headers['X-email'], $headers['X-firstname'], $headers['X-lastname'], true); // Create new WP User	
-				al_authenticate($userdata);
-				wp_set_auth_cookie($user_id, false);
-			}
-			else { // Already a current WP user
-				$userdata = al_update_existing_user($user_id, $user_login, $headers['X-email'], $headers['X-firstname'], $headers['X-lastname'], false); // Update existing WP User
-				al_authenticate($userdata);
-				wp_set_auth_cookie($user_id, false);
-			}
+			if(!$user_id) // Not a current WP user
+				{$userdata = al_create_new_user($user_id, $user_login, $headers['X-email'], $headers['X-firstname'], $headers['X-lastname'], true);} // Create new WP User
+			else // Already a current WP user
+				{$userdata = al_update_existing_user($user_id, $user_login, $headers['X-email'], $headers['X-firstname'], $headers['X-lastname'], false);} // Update existing WP User
+			
+			al_authenticate($userdata); //Authenticate the user
+			wp_set_auth_cookie($user_id, false); //Set the Authorization Cookie
+			wp_safe_redirect(admin_url());//Redirect to wp-login.php and then back to current location
 		}
 		else if(empty($user_login))
 			{$errors->add('empty_username', __('<strong>ERROR</strong>: The username header is empty.'));}
