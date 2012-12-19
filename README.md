@@ -1,17 +1,17 @@
 Auto-Login
 ============
 
- @package Auto_Login
- @version 1.1
+    @package Auto_Login
+    @version 1.1
 
 
-Plugin Name: Auto Login
-Plugin URI: https://github.com/scweber/Auto-Login
-Description: This plugin will automatically log a user into WordPress if they are logged into Access Manager.
-This allows for a user to log into Access Manager and then be automatically logged into Wordpress, without having to navigate to the Admin Console.
-Author: Scott Weber and Matthew Ehle
-Version: 1.1
-Author URI: https://github.com/scweber
+    Plugin Name: Auto Login
+    Plugin URI: https://github.com/scweber/Auto-Login
+    Description: This plugin will automatically log a user into WordPress if they are logged into Access Manager.
+    This allows for a user to log into Access Manager and then be automatically logged into Wordpress, without having to navigate to the Admin Console.
+    Author: Scott Weber and Matthew Ehle
+    Version: 1.1
+    Author URI: https://github.com/scweber
 
 
     Copyright 2012  Scott Weber/Matthew Ehle  (email : scweber@novell.com, mehle@novell.com)
