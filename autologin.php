@@ -6,12 +6,12 @@
  */
 /*
 Plugin Name: Auto Login
-Plugin URI: https://github.com/scweber/Auto-Login
+Plugin URI: https://github.com/scweber/Auto_Login 
 Description: This plugin will automatically log a user into WordPress if they are logged into Access Manager.
 This allows for a user to log into Access Manager and then be automatically logged into Wordpress, without having to navigate to the Admin Console.
 Author: Scott Weber and Matthew Ehle
 Version: 1.1
-Author URI: https://github.com/scweber/
+Author URI: https://github.com/scweber
 */
 
 /*  Copyright 2012  Scott Weber/Matthew Ehle  (email : scweber@novell.com, mehle@novell.com)
@@ -30,10 +30,10 @@ Author URI: https://github.com/scweber/
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-// Create a new user with the Header Data
+//Create a new user with the Header Data
 function al_create_new_user($user_id, $user_login, $email, $fname, $lname, $setAsSubscriber) {
-  error_log("Creating New User...");
-	// Populate the userdata array
+	error_log("Creating New User...");
+	//Populate the userdata array
 	$userdata = array(
 		'ID'		=> $user_id,
 		'user_login' 	=> $user_login,
@@ -49,10 +49,10 @@ function al_create_new_user($user_id, $user_login, $email, $fname, $lname, $setA
 	return $userdata;
 }
 
-// Update the current user with the Header Data
+//Update the current user with the Header Data
 function al_update_existing_user($user_id, $user_login, $email, $fname, $lname, $setAsSubscriber) {
 	error_log("Updating Existing User...");
-	// Populate the userdata array
+	//Populate the userdata array
 	$userdata = array(
 		'ID'            => $user_id,
 		'user_login'    => $user_login,
@@ -68,66 +68,52 @@ function al_update_existing_user($user_id, $user_login, $email, $fname, $lname, 
 	return $userdata;
 }
 
-function al_authenticate($userdata) {
-	$username = $userdata->user_login;
-
-	$user = apply_filters('authenticate', null, $username);
-
-	if($user == null)
-		{$user = new WP_Error('authentication_failed', __('<strong>ERROR</strong>: Invalid username.'));}
-
-	$ignore_codes = array('empty_username');
-
-	if(is_wp_error($user) && !in_array($user->get_error_code(), $ignore_codes)) 
-		{do_action('wp_login_failed', $username);}
-	
+function al_authenticate_username($user, $username, $pass) {
+	$user = new WP_User($user->ID);
 	return $user;
 }
 
-//Hooks
-add_action('init', 'al_user_login', 1);
-
-// Add Filter
-//add_filter('authenticate', 'al_authenticate', 1);
-
 function al_user_login() {
-	$headers = apache_request_headers(); // Get the headers present
+	$headers = apache_request_headers(); //Get the headers present
 
-	$current_user = wp_get_current_user();
-	
-	if(!is_user_logged_in() && (isset($headers['X-cn']) && ($headers['X-cn'] != ""))) { // Is the user already logged into WP?
+	if(!is_user_logged_in() && (isset($headers['X-cn']) && ($headers['X-cn'] != ""))) { //User logged into AM, but not WP
 		$errors = "";
 		error_log($headers['X-cn'] . " is logged into AM, but not WP.  Logging them into WP...");
 		
-		if(isset($headers['X-cn']) && ($headers['X-cn'] != "")) // Set the user_login if X-cn header is present
-			{$user_login = $headers['X-cn'];}
-		
-		if(isset($headers['X-email']) && ($headers['X-email'] != "")) // Set the user_login if X-cn header is present
-			{$user_email = $headers['X-email'];}
+		$user_login	= $headers['X-cn'];
+		$user_email	= $headers['X-email'];
+		$user_firstname	= $headers['X-firstname'];
+		$user_lastname	= $headers['X-lastname'];
 		
 		if($user_login) {
-			$user_id = username_exists($user_login); // Is is a valid, current WP user?
-			remove_filter('authenticate', 'wp_authenticate_username_password', 20, 3); // Remove filter
+			$user_id = username_exists($user_login); //Is is a valid, current WP user?
+
+			if(!$user_id) //Not a current WP user
+				{$userdata = al_create_new_user($user_id, $user_login, $user_email, $user_firstname, $user_lastname, true);}
+			else //Already a current WP user
+				{$userdata = al_update_existing_user($user_id, $user_login, $user_email, $user_firstname, $user_lastname, false);}
 			
-			if(!$user_id) // Not a current WP user
-				{$userdata = al_create_new_user($user_id, $user_login, $headers['X-email'], $headers['X-firstname'], $headers['X-lastname'], true);} // Create new WP User
-			else // Already a current WP user
-				{$userdata = al_update_existing_user($user_id, $user_login, $headers['X-email'], $headers['X-firstname'], $headers['X-lastname'], false);} // Update existing WP User
-			
-			al_authenticate($userdata); //Authenticate the user
+			wp_authenticate($userdata->user_login, NULL);	
 			wp_set_auth_cookie($user_id, false); //Set the Authorization Cookie
-			wp_safe_redirect(admin_url());//Redirect to wp-login.php and then back to current location
+			wp_redirect($_SERVER['REQUEST_URI']); //Redirect back to current location
+			exit;
 		}
 		else if(empty($user_login))
 			{$errors->add('empty_username', __('<strong>ERROR</strong>: The username header is empty.'));}
 	}		
-	else if(is_user_logged_in() && (!isset($headers['X-cn']) || ($headers['X-cn'] == ""))) { // User logged into WP, but not AM
+	else if(is_user_logged_in() && (!isset($headers['X-cn']) || ($headers['X-cn'] == ""))) { //User logged into WP, but not AM
 		error_log($current_user->user_login . " is logged into WP, but not AM. Logging them out of WP...");
 		wp_logout();
-		$redirect_to = !empty( $_REQUEST['redirect_to'] ) ? $_REQUEST['redirect_to'] : 'communities/';
+		wp_redirect($_SERVER['REQUEST_URI']);
+		exit;
 	}
-	else if(is_user_logged_in() && (isset($headers['X-cn']) && ($headers['X-cn'] != ""))) { // User is logged into WP and AM	
+	else if(is_user_logged_in() && (isset($headers['X-cn']) && ($headers['X-cn'] != ""))) { //User is logged into WP and AM	
 		error_log($headers['X-cn'] . " is currently logged into AM and WP.");
+		if(strpos($_SERVER['REQUEST_URI'], 'wp-login.php')) {
+			$redirect_to = str_replace('wp-login.php', '', $_SERVER['REQUEST_URI']);
+			wp_redirect($redirect_to);
+			exit;
+		}
 	}
 	else {
 		error_log("Nobody is logged into AM or WP");
@@ -162,5 +148,21 @@ function al_user_login() {
 	<?php
 	}
 } //End al_user_login()
+
+function al_admin_bar_render() {
+	global $wp_admin_bar;
+
+	
+}
+
+//Hooks
+add_action('init', 'al_user_login', 1);
+//add_action('wp_admin_bar_render', 'al_admin_bar_render', 1);
+
+//Remove Filter
+remove_filter('authenticate', 'wp_authenticate_username_password', 20, 3);
+
+//Add Filter
+add_filter('authenticate', 'al_authenticate_username', 10, 3);
 
 ?>
