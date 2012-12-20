@@ -2,7 +2,7 @@
 /**
  *
  * @package Auto_Login
- * @version 1.1
+ * @version 1.2
  */
 /*
 Plugin Name: Auto Login
@@ -10,7 +10,7 @@ Plugin URI: https://github.com/scweber/Auto_Login
 Description: This plugin will automatically log a user into WordPress if they are logged into Access Manager.
 This allows for a user to log into Access Manager and then be automatically logged into Wordpress, without having to navigate to the Admin Console.
 Author: Scott Weber and Matthew Ehle
-Version: 1.1
+Version: 1.2
 Author URI: https://github.com/scweber
 */
 
@@ -152,12 +152,55 @@ function al_user_login() {
 function al_admin_bar_render() {
 	global $wp_admin_bar;
 
+	$al_logout_url = $_SERVER['REQUEST_URI'];
+	$al_logout_url = parse_url($al_logout_url);	
+	$al_logout_url = $al_logout_url['HOST'] . "/AGLogout";
+
+	$user_id      = get_current_user_id();
+	$current_user = wp_get_current_user();
+	$profile_url  = get_edit_profile_url( $user_id );
+
+	if ( ! $user_id )
+        	return;
+
+	$wp_admin_bar->add_group( array(
+        	'parent' => 'my-account',
+	        'id'     => 'user-actions',
+	) );
+
+	$user_info  = get_avatar( $user_id, 64 );
+	$user_info .= "<span class='display-name'>{$current_user->display_name}</span>";
+
+	if ( $current_user->display_name !== $current_user->user_nicename )
+        	$user_info .= "<span class='username'>{$current_user->user_nicename}</span>";
+
+	$wp_admin_bar->add_menu( array(
+        	'parent' => 'user-actions',
+	        'id'     => 'user-info',
+        	'title'  => $user_info,
+	        'href'   => $profile_url,
+        	'meta'   => array(
+                	'tabindex' => -1,
+        	),
+	) );
+	$wp_admin_bar->add_menu( array(
+        	'parent' => 'user-actions',
+	        'id'     => 'edit-profile',
+        	'title'  => __( 'Edit My Profile' ),
+	        'href' => $profile_url,
+	) );
+	$wp_admin_bar->add_menu( array(
+        	'parent' => 'user-actions',
+	        'id'     => 'logout',
+        	'title'  => __( 'Log Out' ),
+	        'href'   => $al_logout_url,
+	) );	
 	
 }
 
 //Hooks
 add_action('init', 'al_user_login', 1);
-//add_action('wp_admin_bar_render', 'al_admin_bar_render', 1);
+add_action('wp_before_admin_bar_render', 'al_admin_bar_render', 1);
 
 //Remove Filter
 remove_filter('authenticate', 'wp_authenticate_username_password', 20, 3);
