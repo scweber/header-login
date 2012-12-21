@@ -1,16 +1,16 @@
-Auto-Login
+Header-Login
 ============
 
-    @package Auto_Login
-    @version 1.1
+    @package Header_Login
+    @version 1.2
 
 
-    Plugin Name: Auto Login
-    Plugin URI: https://github.com/scweber/Auto-Login
-    Description: This plugin will automatically log a user into WordPress if they are logged into Access Manager.
+    Plugin Name: Header Login
+    Plugin URI: https://github.com/scweber/Header-Login
+    Description: This plugin will automatically log a user into WordPress based on headers that are being passed.  They must be logged into Access Manager.
     This allows for a user to log into Access Manager and then be automatically logged into Wordpress, without having to navigate to the Admin Console.
     Author: Scott Weber and Matthew Ehle
-    Version: 1.1
+    Version: 1.2
     Author URI: https://github.com/scweber
 
 
