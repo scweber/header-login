@@ -1,12 +1,12 @@
 <?php
 /**
  *
- * @package Auto_Login
+ * @package Header_Login
  * @version 1.2
  */
 /*
-Plugin Name: Auto Login
-Plugin URI: https://github.com/scweber/Auto_Login 
+Plugin Name: Header Login
+Plugin URI: https://github.com/scweber/Header_Login 
 Description: This plugin will automatically log a user into WordPress if they are logged into Access Manager.
 This allows for a user to log into Access Manager and then be automatically logged into Wordpress, without having to navigate to the Admin Console.
 Author: Scott Weber and Matthew Ehle
@@ -30,8 +30,39 @@ Author URI: https://github.com/scweber
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+//Activation Hook
+function hl_activation_hook() {
+	update_option('hl_userLogin_Header', $_POST['expired-post-status']);
+	update_option('hl_userEmail_Header', $_POST['expired-post-status']);
+	update_option('hl_userFirstname_Header', $_POST['expired-post-status']);
+	update_option('hl_userLastname_Header', $_POST['expired-post-status']);
+	update_option('hl_userNicename_Header', $_POST['expired-post-status']);
+	update_option('hl_userDisplayname_Header', $_POST['expired-post-status']);
+	update_option('hl_authAttribute', $_POST['expired-post-status']);
+	update_option('hl_createNewUser', $_POST['expired-post-status']);
+	update_option('hl_defaultRole', $_POST['expired-post-status']);
+	update_option('hl_logoutURL', $_POST['expired-post-status']);
+}
+
+//Deactivation Hook
+function hl_deactivation_hook() {
+	delete_option('hl_userLogin_Header', $_POST['expired-post-status']);
+	delete_option('hl_userEmail_Header', $_POST['expired-post-status']);
+	delete_option('hl_userFirstname_Header', $_POST['expired-post-status']);
+	delete_option('hl_userLastname_Header', $_POST['expired-post-status']);
+	delete_option('hl_userNicename_Header', $_POST['expired-post-status']);
+	delete_option('hl_userDisplayname_Header', $_POST['expired-post-status']);
+	delete_option('hl_authAttribute', $_POST['expired-post-status']);
+	delete_option('hl_createNewUser', $_POST['expired-post-status']);
+	delete_option('hl_defaultRole', $_POST['expired-post-status']);
+	delete_option('hl_logoutURL', $_POST['expired-post-status']);
+}
+
+function hl_plugin_menu()
+	{add_submenu_page('options-general.php',__('Header Login Options','header-login'),__('Header Login','header-login'),'edit_plugins',basename(__FILE__),'hl_menu');}	
+	
 //Create a new user with the Header Data
-function al_create_new_user($user_id, $user_login, $email, $fname, $lname, $setAsSubscriber) {
+function hl_create_new_user($user_id, $user_login, $email, $fname, $lname, $setAsSubscriber) {
 	error_log("Creating New User...");
 	//Populate the userdata array
 	$userdata = array(
@@ -47,10 +78,10 @@ function al_create_new_user($user_id, $user_login, $email, $fname, $lname, $setA
 
 	wp_insert_user($userdata);
 	return $userdata;
-}
+}//End hl_create_new_user
 
 //Update the current user with the Header Data
-function al_update_existing_user($user_id, $user_login, $email, $fname, $lname, $setAsSubscriber) {
+function hl_update_existing_user($user_id, $user_login, $email, $fname, $lname, $setAsSubscriber) {
 	error_log("Updating Existing User...");
 	//Populate the userdata array
 	$userdata = array(
@@ -66,19 +97,19 @@ function al_update_existing_user($user_id, $user_login, $email, $fname, $lname, 
 
 	wp_update_user($userdata);
 	return $userdata;
-}
+}//End hl_update_existing_user
 
-function al_authenticate_username($user, $username, $pass) {
+function hl_authenticate_username($user, $username, $pass) {
 	$user = new WP_User($user->ID);
 	return $user;
-}
+}//End hl_authenticate_username
 
-function al_user_login() {
+function hl_user_login() {
 	$headers = apache_request_headers(); //Get the headers present
-
+	
 	if(!is_user_logged_in() && (isset($headers['X-cn']) && ($headers['X-cn'] != ""))) { //User logged into AM, but not WP
 		$errors = "";
-		error_log($headers['X-cn'] . " is logged into AM, but not WP.  Logging them into WP...");
+		//error_log($headers['X-cn'] . " is logged into AM, but not WP.  Logging them into WP...");
 		
 		$user_login	= $headers['X-cn'];
 		$user_email	= $headers['X-email'];
@@ -89,9 +120,9 @@ function al_user_login() {
 			$user_id = username_exists($user_login); //Is is a valid, current WP user?
 
 			if(!$user_id) //Not a current WP user
-				{$userdata = al_create_new_user($user_id, $user_login, $user_email, $user_firstname, $user_lastname, true);}
+				{$userdata = hl_create_new_user($user_id, $user_login, $user_email, $user_firstname, $user_lastname, true);}
 			else //Already a current WP user
-				{$userdata = al_update_existing_user($user_id, $user_login, $user_email, $user_firstname, $user_lastname, false);}
+				{$userdata = hl_update_existing_user($user_id, $user_login, $user_email, $user_firstname, $user_lastname, false);}
 			
 			wp_authenticate($userdata->user_login, NULL);	
 			wp_set_auth_cookie($user_id, false); //Set the Authorization Cookie
@@ -102,13 +133,13 @@ function al_user_login() {
 			{$errors->add('empty_username', __('<strong>ERROR</strong>: The username header is empty.'));}
 	}		
 	else if(is_user_logged_in() && (!isset($headers['X-cn']) || ($headers['X-cn'] == ""))) { //User logged into WP, but not AM
-		error_log($current_user->user_login . " is logged into WP, but not AM. Logging them out of WP...");
+		//error_log($current_user->user_login . " is logged into WP, but not AM. Logging them out of WP...");
 		wp_logout();
 		wp_redirect($_SERVER['REQUEST_URI']);
 		exit;
 	}
 	else if(is_user_logged_in() && (isset($headers['X-cn']) && ($headers['X-cn'] != ""))) { //User is logged into WP and AM	
-		error_log($headers['X-cn'] . " is currently logged into AM and WP.");
+		//error_log($headers['X-cn'] . " is currently logged into AM and WP.");
 		if(strpos($_SERVER['REQUEST_URI'], 'wp-login.php')) {
 			$redirect_to = str_replace('wp-login.php', '', $_SERVER['REQUEST_URI']);
 			wp_redirect($redirect_to);
@@ -116,7 +147,7 @@ function al_user_login() {
 		}
 	}
 	else {
-		error_log("Nobody is logged into AM or WP");
+		//error_log("Nobody is logged into AM or WP");
 	}
 
 ?>
@@ -147,14 +178,14 @@ function al_user_login() {
 		</html>
 	<?php
 	}
-} //End al_user_login()
+} //End hl_user_login()
 
-function al_admin_bar_render() {
+function hl_admin_bar_render() {
 	global $wp_admin_bar;
 
-	$al_logout_url = $_SERVER['REQUEST_URI'];
-	$al_logout_url = parse_url($al_logout_url);	
-	$al_logout_url = $al_logout_url['HOST'] . "/AGLogout";
+	$hl_logout_url = $_SERVER['REQUEST_URI'];
+	$hl_logout_url = parse_url($hl_logout_url);	
+	$hl_logout_url = $hl_logout_url['HOST'] . "/AGLogout";
 
 	$user_id      = get_current_user_id();
 	$current_user = wp_get_current_user();
@@ -193,19 +224,25 @@ function al_admin_bar_render() {
         	'parent' => 'user-actions',
 	        'id'     => 'logout',
         	'title'  => __( 'Log Out' ),
-	        'href'   => $al_logout_url,
-	) );	
-	
-}
+	        'href'   => $hl_logout_url,
+	) );		
+}//End hl_admin_bar_render
 
-//Hooks
-add_action('init', 'al_user_login', 1);
-add_action('wp_before_admin_bar_render', 'al_admin_bar_render', 1);
+//Activation Hook
+//register_activation_hook(__FILE__, 'hl_activation_hook');
+
+//Deactivation Hook
+//register_deactivation_hook(__FILE__, 'hl_deactivation_hook');
+
+//Action Hooks
+add_action('init', 'hl_user_login', 1);
+add_action('wp_before_admin_bar_render', 'hl_admin_bar_render', 1);
+add_action('admin_menu', 'hl_plugin_menu');
 
 //Remove Filter
 remove_filter('authenticate', 'wp_authenticate_username_password', 20, 3);
 
 //Add Filter
-add_filter('authenticate', 'al_authenticate_username', 10, 3);
+add_filter('authenticate', 'hl_authenticate_username', 10, 3);
 
 ?>
