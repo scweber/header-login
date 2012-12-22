@@ -2,7 +2,7 @@ Header-Login
 ============
 
     @package Header_Login
-    @version 1.2
+    @version 2.0
 
 
     Plugin Name: Header Login
@@ -10,7 +10,7 @@ Header-Login
     Description: This plugin will automatically log a user into WordPress based on headers that are being passed.  They must be logged into Access Manager.
     This allows for a user to log into Access Manager and then be automatically logged into Wordpress, without having to navigate to the Admin Console.
     Author: Scott Weber and Matthew Ehle
-    Version: 1.2
+    Version: 2.0
     Author URI: https://github.com/scweber
 
 
@@ -28,3 +28,7 @@ Header-Login
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+    ChangeLog:
+    ==========
+    2.0 - MAJOR UPGRADE!  New UI components and admin interace.
