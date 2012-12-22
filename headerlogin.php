@@ -2,7 +2,7 @@
 /**
  *
  * @package Header_Login
- * @version 1.2
+ * @version 2.0
  */
 /*
 Plugin Name: Header Login
@@ -10,7 +10,7 @@ Plugin URI: https://github.com/scweber/Header_Login
 Description: This plugin will automatically log a user into WordPress if they are logged into Access Manager.
 This allows for a user to log into Access Manager and then be automatically logged into Wordpress, without having to navigate to the Admin Console.
 Author: Scott Weber and Matthew Ehle
-Version: 1.2
+Version: 2.0
 Author URI: https://github.com/scweber
 */
 
@@ -30,35 +30,176 @@ Author URI: https://github.com/scweber
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+//Default Values
+define('HL_NEWUSERROLE','Subscriber');
+
 //Activation Hook
 function hl_activation_hook() {
-	update_option('hl_userLogin_Header', $_POST['expired-post-status']);
-	update_option('hl_userEmail_Header', $_POST['expired-post-status']);
-	update_option('hl_userFirstname_Header', $_POST['expired-post-status']);
-	update_option('hl_userLastname_Header', $_POST['expired-post-status']);
-	update_option('hl_userNicename_Header', $_POST['expired-post-status']);
-	update_option('hl_userDisplayname_Header', $_POST['expired-post-status']);
-	update_option('hl_authAttribute', $_POST['expired-post-status']);
-	update_option('hl_createNewUser', $_POST['expired-post-status']);
-	update_option('hl_defaultRole', $_POST['expired-post-status']);
-	update_option('hl_logoutURL', $_POST['expired-post-status']);
+	update_option('hl_userLogin_Header', $_POST['user-login-header']);
+	update_option('hl_userEmail_Header', $_POST['user-email-header']);
+	update_option('hl_userFirstname_Header', $_POST['user-firstname-header']);
+	update_option('hl_userLastname_Header', $_POST['user-lastname-header']);
+	update_option('hl_userNicename_Header', $_POST['user-nicename-header']);
+	update_option('hl_userDisplayname_Header', $_POST['user-displayname-header']);
+	update_option('hl_authHeader', $_POST['auth-header']);
+	update_option('hl_createNewUser', $_POST['create-new-user']);
+	update_option('hl_defaultRole', $_POST['new-user-role']);
+	update_option('hl_logoutURL', $_POST['logout-url']);
 }
 
 //Deactivation Hook
 function hl_deactivation_hook() {
-	delete_option('hl_userLogin_Header', $_POST['expired-post-status']);
-	delete_option('hl_userEmail_Header', $_POST['expired-post-status']);
-	delete_option('hl_userFirstname_Header', $_POST['expired-post-status']);
-	delete_option('hl_userLastname_Header', $_POST['expired-post-status']);
-	delete_option('hl_userNicename_Header', $_POST['expired-post-status']);
-	delete_option('hl_userDisplayname_Header', $_POST['expired-post-status']);
-	delete_option('hl_authAttribute', $_POST['expired-post-status']);
-	delete_option('hl_createNewUser', $_POST['expired-post-status']);
-	delete_option('hl_defaultRole', $_POST['expired-post-status']);
-	delete_option('hl_logoutURL', $_POST['expired-post-status']);
+	delete_option('hl_userLogin_Header');
+	delete_option('hl_userEmail_Header');
+	delete_option('hl_userFirstname_Header');
+	delete_option('hl_userLastname_Header');
+	delete_option('hl_userNicename_Header');
+	delete_option('hl_userDisplayname_Header');
+	delete_option('hl_authHeader');
+	delete_option('hl_createNewUser');
+	delete_option('hl_defaultRole');
+	delete_option('hl_logoutURL');
 }
 
-function hl_plugin_menu()
+function hl_menu() {
+	//Update the values in the database
+	if(isset($_POST['header-login-save']) && $_POST['header-login-save']) {
+		update_option('hl_userLogin_Header', $_POST['user-login-header']);
+        	update_option('hl_userEmail_Header', $_POST['user-email-header']);
+	        update_option('hl_userFirstname_Header', $_POST['user-firstname-header']);
+        	update_option('hl_userLastname_Header', $_POST['user-lastname-header']);
+	        update_option('hl_userNicename_Header', $_POST['user-nicename-header']);
+        	update_option('hl_userDisplayname_Header', $_POST['user-displayname-header']);
+	        update_option('hl_authHeader', $_POST['auth-header']);
+        	update_option('hl_createNewUser', $_POST['create-new-user']);
+	        update_option('hl_defaultRole', $_POST['new-user-role']);
+        	update_option('hl_logoutURL', $_POST['logout-url']);
+	}
+
+	//Get the current values out of the database and fill in the view
+	$user_login_header = get_option('hl_userLogin_Header');
+	$user_email_header = get_option('hl_userEmail_Header');
+	$user_firstname_header = get_option('hl_userFirstname_Header');
+        $user_lastname_header = get_option('hl_userLastname_Header');
+	$user_nicename_header = get_option('hl_userNicename_Header');
+        $user_displayname_header = get_option('hl_userDisplayname_Header');
+	$auth_header = get_option('hl_authHeader');
+        $create_new_user = get_option('hl_createNewUser');
+	$new_user_role = get_option('hl_defaultRole', HL_NEWUSERROLE);
+        $hl_logout_url = get_option('hl_logoutURL');
+	
+	echo '<div class="wrap">';
+        echo '<h2>' . __('Header Login Options','header-login') . '</h2>';
+	echo '</div>';
+?>
+	<p>
+		<?php _e('The Header Login plugin sets the WordPress attributes equal the headers passed from Access Manager.'); ?>
+	</p>
+
+	<form method="post" id="header_login_save_options">
+		<h3><?php _e('User Attributes','header-login'); ?></h3>
+		<p>
+			<?php _e('The plugin will overwrite any current attributes, so if you wish to maintain the current value for a WordPress attribute, then leave the respective header field blank.'); ?>
+		</p>
+		<table class="form-table">
+			<tr valign-"top">
+				<th>
+					<label for="wp-attribute"><strong><?php _e('WordPress Attribute','header-login'); ?></strong></label>                       
+					<td>
+						<label for="header"><strong><?php _e('Header','header-login'); ?></strong></label>
+                                		<br/>
+					</td>
+				</th>
+                        </tr>
+			<tr valign-"top">
+				<th scope="row"><label for="user-login-header"><?php _e('user_login*','header-login'); ?></label></th>
+				<td>
+					<input type="text" name="user-login-header" id="user-login-header" value="<?php echo $user_login_header ?>" size="25" /> (<?php _e('Required'); ?>)
+					<br/>
+				</td>
+			</tr>
+			<tr valign-"top">
+                                <th scope="row"><label for="user-email-header"><?php _e('user_email*','header-login'); ?></label></th>
+                                <td>
+                                        <input type="text" name="user-email-header" id="user-email-header" value="<?php echo $user_email_header ?>" size="25" /> (<?php _e('Required'); ?>)
+                                        <br/>
+                                </td>
+                        </tr>
+                        <tr valign-"top">
+                                <th scope="row"><label for="user-firstname-header"><?php _e('first_name','header-login'); ?></label></th>
+                                <td>
+                                        <input type="text" name="user-firstname-header" id="user-firstname-header" value="<?php echo $user_firstname_header ?>" size="25" />
+                                        <br/>
+                                </td>
+                        </tr>
+                        <tr valign-"top">
+                                <th scope="row"><label for="user-lastname-header"><?php _e('last_name','header-login'); ?></label></th>
+                                <td>
+                                        <input type="text" name="user-lastname-header" id="user-lastname-header" value="<?php echo $user_lastname_header ?>" size="25" />
+                                        <br/>
+                                </td>
+                        </tr>
+                        <tr valign-"top">
+                                <th scope="row"><label for="user-nicename-header"><?php _e('user_nicename','header-login'); ?></label></th>
+                                <td>
+                                        <input type="text" name="user-nicename-header" id="user-nicename-header" value="<?php echo $user_nicename_header ?>" size="25" />
+
+                                        <br/>
+                                </td>
+                        </tr>
+                        <tr valign-"top">
+                                <th scope="row"><label for="user-displayname-header"><?php _e('display_name','header-login'); ?></label></th>
+                                <td>
+                                        <input type="text" name="user-displayname-header" id="user-displayname-header" value="<?php echo $user_displayname_header ?>" size="25" />
+                                        <br/>
+                                </td>
+                        </tr>
+		</table>
+		<h3><?php _e('Header Login Settings','header-login'); ?></h3>
+		<table class="form-table">
+			<tr valign-"top">
+				<th scope="row"><label for="auth-header"><?php _e('Authenticating Header*','header-login'); ?></label></th>
+				<td>
+					<input type="text" name="auth-header" id="auth-header" value="<?php echo $auth_header ?>" size="25" /> (<?php _e('Required'); ?>)
+					<br/>
+				</td>
+			</tr>
+			<tr valign="top">
+				<th scope="row"><label for="create-new-user"><?php _e('Automatically Create New Users','header-login'); ?></label></th>
+				<td>
+					<input type="checkbox" name="create-new-user" id="create-new-user" value="<?php echo $create_new_user ?>" /> <label for="create-new-user-true"><?php _e('True'); ?></label>
+					<br/>
+				</td>
+			</tr>
+			<tr valign="top">
+                                <th scope="row"><label for="new-user-role"><?php _e('New Users Role','header-login'); ?></label></th>
+                                <td>
+                                   	<select name="new-user-role" id="new-user-role">
+						<option <?php if($new_user_role == 'Administrator') {echo 'selected="selected"';} ?> value="Administrator"><?php _e('Administrator','header-login'); ?></option>
+						<option <?php if($new_user_role == 'Editor') {echo 'selected="selected"';} ?> value="Editor"><?php _e('Editor','header-login'); ?></option>
+						<option <?php if($new_user_role == 'Author') {echo 'selected="selected"';} ?> value="Author"><?php _e('Author','header-login'); ?></option>
+						<option <?php if($new_user_role == 'Contributor') {echo 'selected="selected"';} ?> value="Contributor"><?php _e('Contributor','header-login'); ?></option>
+						<option <?php if($new_user_role == 'Subscriber') {echo 'selected="selected"';} ?> value="Subscriber"><?php _e('Subscriber','header-login'); ?></option>
+					</select>
+					<br/>
+                                </td>
+                        </tr>
+			<tr valign="top">
+                                <th scope="row"><label for="logout-url"><?php _e('Logout URL*','header-login'); ?></label></th>
+                                <td>
+                                        <?php echo $_SERVER['SERVER_NAME'] . "/" ?><input type="text" name="logout-url" id="logout-url" value="<?php echo $hl_logout_url ?>" size="25" /> (<?php _e('Required'); ?>)
+                                        <br/>
+                                </td>
+                        </tr>
+		</table>
+		<p class="submit">
+			<input type="submit" name="header-login-save" class="button-primary" value="<?php _e('Save Changes','header-login'); ?>" />
+		</p>
+	</form>
+<?php
+}
+
+function hl_plugin_menu() //Set up the plugin menu
 	{add_submenu_page('options-general.php',__('Header Login Options','header-login'),__('Header Login','header-login'),'edit_plugins',basename(__FILE__),'hl_menu');}	
 	
 //Create a new user with the Header Data
@@ -183,9 +324,7 @@ function hl_user_login() {
 function hl_admin_bar_render() {
 	global $wp_admin_bar;
 
-	$hl_logout_url = $_SERVER['REQUEST_URI'];
-	$hl_logout_url = parse_url($hl_logout_url);	
-	$hl_logout_url = $hl_logout_url['HOST'] . "/AGLogout";
+	$hl_logout_url = $_SERVER['SERVER_NAME'] . "/AGLogout";
 
 	$user_id      = get_current_user_id();
 	$current_user = wp_get_current_user();
@@ -229,10 +368,10 @@ function hl_admin_bar_render() {
 }//End hl_admin_bar_render
 
 //Activation Hook
-//register_activation_hook(__FILE__, 'hl_activation_hook');
+register_activation_hook(__FILE__, 'hl_activation_hook');
 
 //Deactivation Hook
-//register_deactivation_hook(__FILE__, 'hl_deactivation_hook');
+register_deactivation_hook(__FILE__, 'hl_deactivation_hook');
 
 //Action Hooks
 add_action('init', 'hl_user_login', 1);
