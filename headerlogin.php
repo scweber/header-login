@@ -31,20 +31,41 @@ Author URI: https://github.com/scweber
 */
 
 //Default Values
+define('HL_USERLOGIN','X-cn');
+define('HL_USEREMAIL','X-email');
+define('HL_AUTHHEADER','X-cn');
 define('HL_NEWUSERROLE','Subscriber');
+define('HL_LOGOUTURL','AGLogout');
 
 //Activation Hook
 function hl_activation_hook() {
-	update_option('hl_userLogin_Header', $_POST['user-login-header']);
-	update_option('hl_userEmail_Header', $_POST['user-email-header']);
+	//Set Default Settings
+	if(isset($_POST['user-login-header']))
+		update_option('hl_userLogin_Header', $_POST['user-login-header']);
+	else
+		update_option('hl_userLogin_Header', HL_USERLOGIN);
+	if(isset($_POST['user-email-header']))
+		update_option('hl_userEmail_Header', $_POST['user-email-header']);
+	else
+		update_option('hl_userEmail_Header', HL_USEREMAIL);
+	if(isset($_POST['user-login-header']))
+		update_option('hl_authHeader', $_POST['auth-header']);
+	else
+		update_option('hl_authHeader', HL_AUTHHEADER);
+	if(isset($_POST['new-user-role']))
+		update_option('hl_defaultRole', $_POST['new-user-role']);
+	else
+		update_option('hl_defaultRole', HL_NEWUSERROLE);
+	if(isset($_POST['logout-url']))
+		update_option('hl_logoutURL', $_POST['logout-url']);
+	else
+		update_option('hl_logoutURL', HL_LOGOUTURL);
+
 	update_option('hl_userFirstname_Header', $_POST['user-firstname-header']);
 	update_option('hl_userLastname_Header', $_POST['user-lastname-header']);
 	update_option('hl_userNicename_Header', $_POST['user-nicename-header']);
 	update_option('hl_userDisplayname_Header', $_POST['user-displayname-header']);
-	update_option('hl_authHeader', $_POST['auth-header']);
 	update_option('hl_createNewUser', $_POST['create-new-user']);
-	update_option('hl_defaultRole', $_POST['new-user-role']);
-	update_option('hl_logoutURL', $_POST['logout-url']);
 }
 
 //Deactivation Hook
@@ -64,29 +85,67 @@ function hl_deactivation_hook() {
 function hl_menu() {
 	//Update the values in the database
 	if(isset($_POST['header-login-save']) && $_POST['header-login-save']) {
-		update_option('hl_userLogin_Header', $_POST['user-login-header']);
-        	update_option('hl_userEmail_Header', $_POST['user-email-header']);
-	        update_option('hl_userFirstname_Header', $_POST['user-firstname-header']);
-        	update_option('hl_userLastname_Header', $_POST['user-lastname-header']);
-	        update_option('hl_userNicename_Header', $_POST['user-nicename-header']);
-        	update_option('hl_userDisplayname_Header', $_POST['user-displayname-header']);
-	        update_option('hl_authHeader', $_POST['auth-header']);
-        	update_option('hl_createNewUser', $_POST['create-new-user']);
-	        update_option('hl_defaultRole', $_POST['new-user-role']);
-        	update_option('hl_logoutURL', $_POST['logout-url']);
+		if($_POST['user-login-header'] != "" && $_POST['user-email-header'] != "" && $_POST['auth-header'] != "" && $_POST['logout-url'] != "") {
+	                update_option('hl_userLogin_Header', $_POST['user-login-header']);
+        	        update_option('hl_userEmail_Header', $_POST['user-email-header']);
+                	update_option('hl_userFirstname_Header', $_POST['user-firstname-header']);
+               		update_option('hl_userLastname_Header', $_POST['user-lastname-header']);
+                	update_option('hl_userNicename_Header', $_POST['user-nicename-header']);
+                	update_option('hl_userDisplayname_Header', $_POST['user-displayname-header']);
+                	update_option('hl_authHeader', $_POST['auth-header']);
+                	update_option('hl_createNewUser', $_POST['create-new-user']);
+                	update_option('hl_defaultRole', $_POST['new-user-role']);
+                	update_option('hl_logoutURL', $_POST['logout-url']);
+
+			?><div id="message" class="updated">
+                                <p><strong><?php _e('Settings Saved') ?></strong></p>
+                        </div>
+                <?php
+                }
+                else if($_POST['user-login-header'] == "") {
+                        ?> <div id="message" class="error">
+                                <p><strong><?php _e('Error Saving Settings: Missing value for User Login Header, reset to default.') ?> </strong></p>
+                        </div>
+                <?php
+                }
+                else if($_POST['user-email-header'] == "") {
+                        ?> <div id="message" class="error">
+                                <p><strong><?php _e('Error Saving Settings: Missing value for User Email Header, reset to default.') ?> </strong></p>
+                        </div>
+                <?php
+                }
+                else if($_POST['auth-header'] == "") {
+                        ?> <div id="message" class="error">
+                                <p><strong><?php _e('Error Saving Settings: Missing value for Authentication Header, reset to default.') ?> </strong></p>
+                        </div>
+                <?php
+                }
+                else if($_POST['logout-url'] == "") {
+                        ?> <div id="message" class="error">
+                                <p><strong><?php _e('Error Saving Settings: Missing value for Logout URL, reset to default.') ?> </strong></p>
+                        </div>
+                <?php
+                }
 	}
 
 	//Get the current values out of the database and fill in the view
-	$user_login_header = get_option('hl_userLogin_Header');
-	$user_email_header = get_option('hl_userEmail_Header');
-	$user_firstname_header = get_option('hl_userFirstname_Header');
+	$user_login_header = get_option('hl_userLogin_Header', HL_USERLOGIN);
+        $user_email_header = get_option('hl_userEmail_Header', HL_USEREMAIL);
+        $user_firstname_header = get_option('hl_userFirstname_Header');
         $user_lastname_header = get_option('hl_userLastname_Header');
-	$user_nicename_header = get_option('hl_userNicename_Header');
+        $user_nicename_header = get_option('hl_userNicename_Header');
         $user_displayname_header = get_option('hl_userDisplayname_Header');
-	$auth_header = get_option('hl_authHeader');
-        $create_new_user = get_option('hl_createNewUser');
-	$new_user_role = get_option('hl_defaultRole', HL_NEWUSERROLE);
+        $auth_header = get_option('hl_authHeader', HL_AUTHHEADER);
+        $create_new_user = get_option('hl_createNewUser', 0);
+        $new_user_role = get_option('hl_defaultRole', HL_NEWUSERROLE);
         $hl_logout_url = get_option('hl_logoutURL');
+	
+	$create_new_user_true = '';
+	$create_new_user_false = '';
+	if($create_new_user == 0)
+		$create_new_user_false = 'checked="checked"';
+	else if($create_new_user == 1)
+		$create_new_user_true = 'checked="checked"';
 	
 	echo '<div class="wrap">';
         echo '<h2>' . __('Header Login Options','header-login') . '</h2>';
@@ -114,14 +173,14 @@ function hl_menu() {
 			<tr valign-"top">
 				<th scope="row"><label for="user-login-header"><?php _e('user_login*','header-login'); ?></label></th>
 				<td>
-					<input type="text" name="user-login-header" id="user-login-header" value="<?php echo $user_login_header ?>" size="25" /> (<?php _e('Required'); ?>)
+					<input type="text" name="user-login-header" id="user-login-header" value="<?php echo $user_login_header ?>" size="25" /> (<?php _e('Default: X-cn');?>)
 					<br/>
 				</td>
 			</tr>
 			<tr valign-"top">
                                 <th scope="row"><label for="user-email-header"><?php _e('user_email*','header-login'); ?></label></th>
                                 <td>
-                                        <input type="text" name="user-email-header" id="user-email-header" value="<?php echo $user_email_header ?>" size="25" /> (<?php _e('Required'); ?>)
+                                        <input type="text" name="user-email-header" id="user-email-header" value="<?php echo $user_email_header ?>" size="25" /> (<?php _e('Default: X-email'); ?>)
                                         <br/>
                                 </td>
                         </tr>
@@ -160,14 +219,15 @@ function hl_menu() {
 			<tr valign-"top">
 				<th scope="row"><label for="auth-header"><?php _e('Authenticating Header*','header-login'); ?></label></th>
 				<td>
-					<input type="text" name="auth-header" id="auth-header" value="<?php echo $auth_header ?>" size="25" /> (<?php _e('Required'); ?>)
+					<input type="text" name="auth-header" id="auth-header" value="<?php echo $auth_header ?>" size="25" /> (<?php _e('Default: X-cn'); ?>)
 					<br/>
 				</td>
 			</tr>
 			<tr valign="top">
 				<th scope="row"><label for="create-new-user"><?php _e('Automatically Create New Users','header-login'); ?></label></th>
 				<td>
-					<input type="checkbox" name="create-new-user" id="create-new-user" value="<?php echo $create_new_user ?>" /> <label for="create-new-user-true"><?php _e('True'); ?></label>
+					<input type="radio" name="create-new-user" id="create-new-user-true" value="1" <?php echo $create_new_user_true ?> /> <label for="create-new-user-true"><?php _e('Yes','header-login'); ?></label>
+					<input type="radio" name="create-new-user" id="create-new-user-false" value="0" <?php echo $create_new_user_false ?> /> <label for="create-new-user-false"><?php _e('No','header-login'); ?></label>
 					<br/>
 				</td>
 			</tr>
@@ -186,11 +246,16 @@ function hl_menu() {
                         </tr>
 			<tr valign="top">
                                 <th scope="row"><label for="logout-url"><?php _e('Logout URL*','header-login'); ?></label></th>
-                                <td>
-                                        <?php echo $_SERVER['SERVER_NAME'] . "/" ?><input type="text" name="logout-url" id="logout-url" value="<?php echo $hl_logout_url ?>" size="25" /> (<?php _e('Required'); ?>)
+				<td>
+                                        <?php echo $_SERVER['SERVER_NAME'] . "/" ?><input type="text" name="logout-url" id="logout-url" value="<?php echo $hl_logout_url ?>" size="25" /> (<?php _e('Default: AGLogout'); ?>)
                                         <br/>
                                 </td>
                         </tr>
+			<tr valign="top">
+				<th scope="row">
+					* Required
+				</th>
+			</tr>
 		</table>
 		<p class="submit">
 			<input type="submit" name="header-login-save" class="button-primary" value="<?php _e('Save Changes','header-login'); ?>" />
@@ -203,7 +268,7 @@ function hl_plugin_menu() //Set up the plugin menu
 	{add_submenu_page('options-general.php',__('Header Login Options','header-login'),__('Header Login','header-login'),'edit_plugins',basename(__FILE__),'hl_menu');}	
 	
 //Create a new user with the Header Data
-function hl_create_new_user($user_id, $user_login, $email, $fname, $lname, $setAsSubscriber) {
+function hl_create_new_user($user_id, $user_login, $email, $fname, $lname, $user_nicename, $user_displayname, $user_role, $setAsSubscriber) {
 	error_log("Creating New User...");
 	//Populate the userdata array
 	$userdata = array(
@@ -212,17 +277,17 @@ function hl_create_new_user($user_id, $user_login, $email, $fname, $lname, $setA
 		'user_email' 	=> $email,
 		'first_name' 	=> $fname,
 		'last_name'  	=> $lname,
-		'user_nicename' => $user_login,
-		'display_name' 	=> $user_login);
+		'user_nicename' => $user_nicename,
+		'display_name' 	=> $user_displayname);
 	if($setAsSubscriber)
-		{$userdata['role'] = "contributor";}	
+		{$userdata['role'] = $user_role;}	
 
 	wp_insert_user($userdata);
 	return $userdata;
 }//End hl_create_new_user
 
 //Update the current user with the Header Data
-function hl_update_existing_user($user_id, $user_login, $email, $fname, $lname, $setAsSubscriber) {
+function hl_update_existing_user($user_id, $user_login, $email, $fname, $lname, $user_nicename, $user_displayname, $user_role, $setAsSubscriber) {
 	error_log("Updating Existing User...");
 	//Populate the userdata array
 	$userdata = array(
@@ -231,10 +296,10 @@ function hl_update_existing_user($user_id, $user_login, $email, $fname, $lname, 
 		'user_email'    => $email,
 		'first_name'    => $fname,
 		'last_name'     => $lname,
-		'user_nicename' => $user_login,
-		'display_name'  => $user_login);
+		'user_nicename' => $user_nicename,
+		'display_name'  => $user_displayname);
 	if($setAsSubscriber)
-		{$userdata['role'] = "contributor";}
+		{$userdata['role'] = $user_role;}
 
 	wp_update_user($userdata);
 	return $userdata;
@@ -247,23 +312,38 @@ function hl_authenticate_username($user, $username, $pass) {
 
 function hl_user_login() {
 	$headers = apache_request_headers(); //Get the headers present
+
+	$user_login_header = get_option('hl_userLogin_Header', HL_USERLOGIN);
+        $user_email_header = get_option('hl_userEmail_Header', HL_USEREMAIL);
+        $user_firstname_header = get_option('hl_userFirstname_Header');
+        $user_lastname_header = get_option('hl_userLastname_Header');
+        $user_nicename_header = get_option('hl_userNicename_Header');
+        $user_displayname_header = get_option('hl_userDisplayname_Header');
+        $auth_header = get_option('hl_authHeader', HL_AUTHHEADER);
+        $create_new_user = get_option('hl_createNewUser', 0);
+        $new_user_role = get_option('hl_defaultRole', HL_NEWUSERROLE);
+        $hl_logout_url = get_option('hl_logoutURL');
+
+	error_log($user_login_header);
 	
-	if(!is_user_logged_in() && (isset($headers['X-cn']) && ($headers['X-cn'] != ""))) { //User logged into AM, but not WP
+	if(!is_user_logged_in() && (isset($headers[$user_login_header]) && ($headers[$user_login_header] != ""))) { //User logged into AM, but not WP
 		$errors = "";
-		//error_log($headers['X-cn'] . " is logged into AM, but not WP.  Logging them into WP...");
+		error_log($headers[$user_login_header] . " is logged into AM, but not WP.  Logging them into WP...");
 		
-		$user_login	= $headers['X-cn'];
-		$user_email	= $headers['X-email'];
-		$user_firstname	= $headers['X-firstname'];
-		$user_lastname	= $headers['X-lastname'];
-		
+		$user_login	  = $headers[$user_login_header];
+		$user_email	  = $headers[$user_email_header];
+		$user_firstname	  = $headers[$user_firstname_header];
+		$user_lastname	  = $headers[$user_lastname_header];
+		$user_nicename	  = $headers[$user_nicename_header];
+		$user_displayname = $headers[$user_displayname_header];		
+
 		if($user_login) {
 			$user_id = username_exists($user_login); //Is is a valid, current WP user?
 
-			if(!$user_id) //Not a current WP user
-				{$userdata = hl_create_new_user($user_id, $user_login, $user_email, $user_firstname, $user_lastname, true);}
+			if(!$user_id && $create_new_user == 1) //Not a current WP user
+				{$userdata = hl_create_new_user($user_id, $user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role, true);}
 			else //Already a current WP user
-				{$userdata = hl_update_existing_user($user_id, $user_login, $user_email, $user_firstname, $user_lastname, false);}
+				{$userdata = hl_update_existing_user($user_id, $user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role, false);}
 			
 			wp_authenticate($userdata->user_login, NULL);	
 			wp_set_auth_cookie($user_id, false); //Set the Authorization Cookie
@@ -273,14 +353,14 @@ function hl_user_login() {
 		else if(empty($user_login))
 			{$errors->add('empty_username', __('<strong>ERROR</strong>: The username header is empty.'));}
 	}		
-	else if(is_user_logged_in() && (!isset($headers['X-cn']) || ($headers['X-cn'] == ""))) { //User logged into WP, but not AM
-		//error_log($current_user->user_login . " is logged into WP, but not AM. Logging them out of WP...");
+	else if(is_user_logged_in() && (!isset($headers[$user_login_header]) || ($headers[$user_login_header] == ""))) { //User logged into WP, but not AM
+		error_log($current_user->user_login . " is logged into WP, but not AM. Logging them out of WP...");
 		wp_logout();
 		wp_redirect($_SERVER['REQUEST_URI']);
 		exit;
 	}
-	else if(is_user_logged_in() && (isset($headers['X-cn']) && ($headers['X-cn'] != ""))) { //User is logged into WP and AM	
-		//error_log($headers['X-cn'] . " is currently logged into AM and WP.");
+	else if(is_user_logged_in() && (isset($headers[$user_login_header]) && ($headers[$user_login_header] != ""))) { //User is logged into WP and AM	
+		error_log($headers[$user_login_header] . " is currently logged into AM and WP.");
 		if(strpos($_SERVER['REQUEST_URI'], 'wp-login.php')) {
 			$redirect_to = str_replace('wp-login.php', '', $_SERVER['REQUEST_URI']);
 			wp_redirect($redirect_to);
@@ -288,7 +368,7 @@ function hl_user_login() {
 		}
 	}
 	else {
-		//error_log("Nobody is logged into AM or WP");
+		error_log("Nobody is logged into AM or WP");
 	}
 
 ?>
@@ -324,7 +404,9 @@ function hl_user_login() {
 function hl_admin_bar_render() {
 	global $wp_admin_bar;
 
-	$hl_logout_url = $_SERVER['SERVER_NAME'] . "/AGLogout";
+	$hl_logout_url = get_option('hl_logoutURL');
+
+	$hl_logout_url = $_SERVER['SERVER_NAME'] . '/' . $hl_logout_url;
 
 	$user_id      = get_current_user_id();
 	$current_user = wp_get_current_user();
