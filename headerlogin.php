@@ -98,34 +98,34 @@ function hl_menu() {
 			update_option('hl_logoutURL', $_POST['logout-url']);
 
 			?><div id="message" class="updated">
-					<p><strong><?php _e('Settings Saved') ?></strong></p>
-				</div>
-			<?php
-			}
-			else if($_POST['user-login-header'] == "") {
-				?> <div id="message" class="error">
-					<p><strong><?php _e('Error Saving Settings: Missing value for User Login Header, reset to default.') ?> </strong></p>
-				</div>
-			<?php
-			}
-			else if($_POST['user-email-header'] == "") {
-				?> <div id="message" class="error">
-					<p><strong><?php _e('Error Saving Settings: Missing value for User Email Header, reset to default.') ?> </strong></p>
-				</div>
-			<?php
-			}
-			else if($_POST['auth-header'] == "") {
-				?> <div id="message" class="error">
-					<p><strong><?php _e('Error Saving Settings: Missing value for Authentication Header, reset to default.') ?> </strong></p>
-				</div>
-			<?php
-			}
-			else if($_POST['logout-url'] == "") {
-				?> <div id="message" class="error">
-					<p><strong><?php _e('Error Saving Settings: Missing value for Logout URL, reset to default.') ?> </strong></p>
-				</div>
-			<?php
-			}
+				<p><strong><?php _e('Settings Saved') ?></strong></p>
+			</div>
+		<?php
+		}
+		else if($_POST['user-login-header'] == "") {
+			?> <div id="message" class="error">
+				<p><strong><?php _e('Error Saving Settings: Missing value for User Login Header, reset to default.') ?> </strong></p>
+			</div>
+		<?php
+		}
+		else if($_POST['user-email-header'] == "") {
+			?> <div id="message" class="error">
+				<p><strong><?php _e('Error Saving Settings: Missing value for User Email Header, reset to default.') ?> </strong></p>
+			</div>
+		<?php
+		}
+		else if($_POST['auth-header'] == "") {
+			?> <div id="message" class="error">
+				<p><strong><?php _e('Error Saving Settings: Missing value for Authentication Header, reset to default.') ?> </strong></p>
+			</div>
+		<?php
+		}
+		else if($_POST['logout-url'] == "") {
+			?> <div id="message" class="error">
+				<p><strong><?php _e('Error Saving Settings: Missing value for Logout URL, reset to default.') ?> </strong></p>
+			</div>
+		<?php
+		}
 	}
 
 	//Get the current values out of the database and fill in the view
