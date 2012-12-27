@@ -86,46 +86,46 @@ function hl_menu() {
 	//Update the values in the database, send error message if all required fields not filled in.
 	if(isset($_POST['header-login-save']) && $_POST['header-login-save']) {
 		if($_POST['user-login-header'] != "" && $_POST['user-email-header'] != "" && $_POST['auth-header'] != "" && $_POST['logout-url'] != "") {
-	                update_option('hl_userLogin_Header', $_POST['user-login-header']);
-        	        update_option('hl_userEmail_Header', $_POST['user-email-header']);
-                	update_option('hl_userFirstname_Header', $_POST['user-firstname-header']);
-               		update_option('hl_userLastname_Header', $_POST['user-lastname-header']);
-                	update_option('hl_userNicename_Header', $_POST['user-nicename-header']);
-                	update_option('hl_userDisplayname_Header', $_POST['user-displayname-header']);
-                	update_option('hl_authHeader', $_POST['auth-header']);
-                	update_option('hl_createNewUser', $_POST['create-new-user']);
-                	update_option('hl_defaultRole', $_POST['new-user-role']);
-                	update_option('hl_logoutURL', $_POST['logout-url']);
+			update_option('hl_userLogin_Header', $_POST['user-login-header']);
+			update_option('hl_userEmail_Header', $_POST['user-email-header']);
+			update_option('hl_userFirstname_Header', $_POST['user-firstname-header']);
+			update_option('hl_userLastname_Header', $_POST['user-lastname-header']);
+			update_option('hl_userNicename_Header', $_POST['user-nicename-header']);
+			update_option('hl_userDisplayname_Header', $_POST['user-displayname-header']);
+			update_option('hl_authHeader', $_POST['auth-header']);
+			update_option('hl_createNewUser', $_POST['create-new-user']);
+			update_option('hl_defaultRole', $_POST['new-user-role']);
+			update_option('hl_logoutURL', $_POST['logout-url']);
 
 			?><div id="message" class="updated">
-                                <p><strong><?php _e('Settings Saved') ?></strong></p>
-                        </div>
-                <?php
-                }
-                else if($_POST['user-login-header'] == "") {
-                        ?> <div id="message" class="error">
-                                <p><strong><?php _e('Error Saving Settings: Missing value for User Login Header, reset to default.') ?> </strong></p>
-                        </div>
-                <?php
-                }
-                else if($_POST['user-email-header'] == "") {
-                        ?> <div id="message" class="error">
-                                <p><strong><?php _e('Error Saving Settings: Missing value for User Email Header, reset to default.') ?> </strong></p>
-                        </div>
-                <?php
-                }
-                else if($_POST['auth-header'] == "") {
-                        ?> <div id="message" class="error">
-                                <p><strong><?php _e('Error Saving Settings: Missing value for Authentication Header, reset to default.') ?> </strong></p>
-                        </div>
-                <?php
-                }
-                else if($_POST['logout-url'] == "") {
-                        ?> <div id="message" class="error">
-                                <p><strong><?php _e('Error Saving Settings: Missing value for Logout URL, reset to default.') ?> </strong></p>
-                        </div>
-                <?php
-                }
+					<p><strong><?php _e('Settings Saved') ?></strong></p>
+				</div>
+			<?php
+			}
+			else if($_POST['user-login-header'] == "") {
+				?> <div id="message" class="error">
+					<p><strong><?php _e('Error Saving Settings: Missing value for User Login Header, reset to default.') ?> </strong></p>
+				</div>
+			<?php
+			}
+			else if($_POST['user-email-header'] == "") {
+				?> <div id="message" class="error">
+					<p><strong><?php _e('Error Saving Settings: Missing value for User Email Header, reset to default.') ?> </strong></p>
+				</div>
+			<?php
+			}
+			else if($_POST['auth-header'] == "") {
+				?> <div id="message" class="error">
+					<p><strong><?php _e('Error Saving Settings: Missing value for Authentication Header, reset to default.') ?> </strong></p>
+				</div>
+			<?php
+			}
+			else if($_POST['logout-url'] == "") {
+				?> <div id="message" class="error">
+					<p><strong><?php _e('Error Saving Settings: Missing value for Logout URL, reset to default.') ?> </strong></p>
+				</div>
+			<?php
+			}
 	}
 
 	//Get the current values out of the database and fill in the view
@@ -166,10 +166,10 @@ function hl_menu() {
 					<label for="wp-attribute"><strong><?php _e('WordPress Attribute','header-login'); ?></strong></label>                       
 					<td>
 						<label for="header"><strong><?php _e('Header','header-login'); ?></strong></label>
-                                		<br/>
+                        <br/>
 					</td>
 				</th>
-                        </tr>
+			</tr>
 			<tr valign-"top">
 				<th scope="row"><label for="user-login-header"><?php _e('user_login*','header-login'); ?></label></th>
 				<td>
@@ -178,41 +178,40 @@ function hl_menu() {
 				</td>
 			</tr>
 			<tr valign-"top">
-                                <th scope="row"><label for="user-email-header"><?php _e('user_email*','header-login'); ?></label></th>
-                                <td>
-                                        <input type="text" name="user-email-header" id="user-email-header" value="<?php echo $user_email_header ?>" size="25" /> (<?php _e('Default: X-email'); ?>)
-                                        <br/>
-                                </td>
-                        </tr>
-                        <tr valign-"top">
-                                <th scope="row"><label for="user-firstname-header"><?php _e('first_name','header-login'); ?></label></th>
-                                <td>
-                                        <input type="text" name="user-firstname-header" id="user-firstname-header" value="<?php echo $user_firstname_header ?>" size="25" />
-                                        <br/>
-                                </td>
-                        </tr>
-                        <tr valign-"top">
-                                <th scope="row"><label for="user-lastname-header"><?php _e('last_name','header-login'); ?></label></th>
-                                <td>
-                                        <input type="text" name="user-lastname-header" id="user-lastname-header" value="<?php echo $user_lastname_header ?>" size="25" />
-                                        <br/>
-                                </td>
-                        </tr>
-                        <tr valign-"top">
-                                <th scope="row"><label for="user-nicename-header"><?php _e('user_nicename','header-login'); ?></label></th>
-                                <td>
-                                        <input type="text" name="user-nicename-header" id="user-nicename-header" value="<?php echo $user_nicename_header ?>" size="25" />
-
-                                        <br/>
-                                </td>
-                        </tr>
-                        <tr valign-"top">
-                                <th scope="row"><label for="user-displayname-header"><?php _e('display_name','header-login'); ?></label></th>
-                                <td>
-                                        <input type="text" name="user-displayname-header" id="user-displayname-header" value="<?php echo $user_displayname_header ?>" size="25" />
-                                        <br/>
-                                </td>
-                        </tr>
+				<th scope="row"><label for="user-email-header"><?php _e('user_email*','header-login'); ?></label></th>
+				<td>
+					<input type="text" name="user-email-header" id="user-email-header" value="<?php echo $user_email_header ?>" size="25" /> (<?php _e('Default: X-email'); ?>)
+					<br/>
+				</td>
+			</tr>
+			<tr valign-"top">
+				<th scope="row"><label for="user-firstname-header"><?php _e('first_name','header-login'); ?></label></th>
+				<td>
+					<input type="text" name="user-firstname-header" id="user-firstname-header" value="<?php echo $user_firstname_header ?>" size="25" />
+					<br/>
+				</td>
+			</tr>
+			<tr valign-"top">
+				<th scope="row"><label for="user-lastname-header"><?php _e('last_name','header-login'); ?></label></th>
+				<td>
+					<input type="text" name="user-lastname-header" id="user-lastname-header" value="<?php echo $user_lastname_header ?>" size="25" />
+					<br/>
+				</td>
+			</tr>
+			<tr valign-"top">
+				<th scope="row"><label for="user-nicename-header"><?php _e('user_nicename','header-login'); ?></label></th>
+				<td>
+					<input type="text" name="user-nicename-header" id="user-nicename-header" value="<?php echo $user_nicename_header ?>" size="25" />
+					<br/>
+				</td>
+			</tr>
+			<tr valign-"top">
+				<th scope="row"><label for="user-displayname-header"><?php _e('display_name','header-login'); ?></label></th>
+				<td>
+					<input type="text" name="user-displayname-header" id="user-displayname-header" value="<?php echo $user_displayname_header ?>" size="25" />
+					<br/>
+				</td>
+			</tr>
 		</table>
 		<h3><?php _e('Header Login Settings','header-login'); ?></h3>
 		<table class="form-table">
@@ -232,9 +231,9 @@ function hl_menu() {
 				</td>
 			</tr>
 			<tr valign="top">
-                                <th scope="row"><label for="new-user-role"><?php _e('New Users Role','header-login'); ?></label></th>
-                                <td>
-                                   	<select name="new-user-role" id="new-user-role">
+				<th scope="row"><label for="new-user-role"><?php _e('New Users Role','header-login'); ?></label></th>
+				<td>
+					<select name="new-user-role" id="new-user-role">
 						<option <?php if($new_user_role == 'administrator') {echo 'selected="selected"';} ?> value="administrator"><?php _e('Administrator','header-login'); ?></option>
 						<option <?php if($new_user_role == 'editor') {echo 'selected="selected"';} ?> value="editor"><?php _e('Editor','header-login'); ?></option>
 						<option <?php if($new_user_role == 'author') {echo 'selected="selected"';} ?> value="author"><?php _e('Author','header-login'); ?></option>
@@ -242,15 +241,15 @@ function hl_menu() {
 						<option <?php if($new_user_role == 'subscriber') {echo 'selected="selected"';} ?> value="subscriber"><?php _e('Subscriber','header-login'); ?></option>
 					</select>
 					<br/>
-                                </td>
-                        </tr>
+				</td>
+			</tr>
 			<tr valign="top">
-                                <th scope="row"><label for="logout-url"><?php _e('Logout URL*','header-login'); ?></label></th>
+				<th scope="row"><label for="logout-url"><?php _e('Logout URL*','header-login'); ?></label></th>
 				<td>
-                                        <?php echo $_SERVER['SERVER_NAME'] . "/" ?><input type="text" name="logout-url" id="logout-url" value="<?php echo $hl_logout_url ?>" size="25" /> (<?php _e('Default: AGLogout'); ?>)
-                                        <br/>
-                                </td>
-                        </tr>
+					<?php echo $_SERVER['SERVER_NAME'] . "/" ?><input type="text" name="logout-url" id="logout-url" value="<?php echo $hl_logout_url ?>" size="25" /> (<?php _e('Default: AGLogout'); ?>)
+					<br/>
+				</td>
+			</tr>
 			<tr valign="top">
 				<th scope="row">
 					* Required
@@ -427,40 +426,34 @@ function hl_admin_bar_render() {
 	$profile_url  = get_edit_profile_url( $user_id );
 
 	if ( ! $user_id )
-        	return;
+		{return;}
 
 	$wp_admin_bar->add_group( array(
-        	'parent' => 'my-account',
-	        'id'     => 'user-actions',
-	) );
+		'parent' => 'my-account',
+		'id'     => 'user-actions',) );
 
 	$user_info  = get_avatar( $user_id, 64 );
 	$user_info .= "<span class='display-name'>{$current_user->display_name}</span>";
 
 	if ( $current_user->display_name !== $current_user->user_nicename )
-        	$user_info .= "<span class='username'>{$current_user->user_nicename}</span>";
+		{$user_info .= "<span class='username'>{$current_user->user_nicename}</span>";}
 
 	$wp_admin_bar->add_menu( array(
-        	'parent' => 'user-actions',
-	        'id'     => 'user-info',
-        	'title'  => $user_info,
-	        'href'   => $profile_url,
-        	'meta'   => array(
-                	'tabindex' => -1,
-        	),
-	) );
+		'parent' => 'user-actions',
+		'id'     => 'user-info',
+		'title'  => $user_info,
+		'href'   => $profile_url,
+		'meta'   => array('tabindex' => -1,),) );
 	$wp_admin_bar->add_menu( array(
-        	'parent' => 'user-actions',
-	        'id'     => 'edit-profile',
-        	'title'  => __( 'Edit My Profile' ),
-	        'href' => $profile_url,
-	) );
+		'parent' => 'user-actions',
+		'id'     => 'edit-profile',
+		'title'  => __( 'Edit My Profile' ),
+		'href' => $profile_url,) );
 	$wp_admin_bar->add_menu( array(
-        	'parent' => 'user-actions',
-	        'id'     => 'logout',
-        	'title'  => __( 'Log Out' ),
-	        'href'   => $hl_logout_url,
-	) );		
+		'parent' => 'user-actions',
+		'id'     => 'logout',
+		'title'  => __( 'Log Out' ),
+		'href'   => $hl_logout_url,) );		
 }//End hl_admin_bar_render
 
 //Activation Hook
