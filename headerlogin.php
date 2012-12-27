@@ -34,7 +34,7 @@ Author URI: https://github.com/scweber
 define('HL_USERLOGIN','X-cn');
 define('HL_USEREMAIL','X-email');
 define('HL_AUTHHEADER','X-cn');
-define('HL_NEWUSERROLE','Subscriber');
+define('HL_NEWUSERROLE','subscriber');
 define('HL_LOGOUTURL','AGLogout');
 
 //Activation Hook
@@ -83,7 +83,7 @@ function hl_deactivation_hook() {
 }
 
 function hl_menu() {
-	//Update the values in the database
+	//Update the values in the database, send error message if all required fields not filled in.
 	if(isset($_POST['header-login-save']) && $_POST['header-login-save']) {
 		if($_POST['user-login-header'] != "" && $_POST['user-email-header'] != "" && $_POST['auth-header'] != "" && $_POST['logout-url'] != "") {
 	                update_option('hl_userLogin_Header', $_POST['user-login-header']);
@@ -235,11 +235,11 @@ function hl_menu() {
                                 <th scope="row"><label for="new-user-role"><?php _e('New Users Role','header-login'); ?></label></th>
                                 <td>
                                    	<select name="new-user-role" id="new-user-role">
-						<option <?php if($new_user_role == 'Administrator') {echo 'selected="selected"';} ?> value="Administrator"><?php _e('Administrator','header-login'); ?></option>
-						<option <?php if($new_user_role == 'Editor') {echo 'selected="selected"';} ?> value="Editor"><?php _e('Editor','header-login'); ?></option>
-						<option <?php if($new_user_role == 'Author') {echo 'selected="selected"';} ?> value="Author"><?php _e('Author','header-login'); ?></option>
-						<option <?php if($new_user_role == 'Contributor') {echo 'selected="selected"';} ?> value="Contributor"><?php _e('Contributor','header-login'); ?></option>
-						<option <?php if($new_user_role == 'Subscriber') {echo 'selected="selected"';} ?> value="Subscriber"><?php _e('Subscriber','header-login'); ?></option>
+						<option <?php if($new_user_role == 'administrator') {echo 'selected="selected"';} ?> value="administrator"><?php _e('Administrator','header-login'); ?></option>
+						<option <?php if($new_user_role == 'editor') {echo 'selected="selected"';} ?> value="editor"><?php _e('Editor','header-login'); ?></option>
+						<option <?php if($new_user_role == 'author') {echo 'selected="selected"';} ?> value="author"><?php _e('Author','header-login'); ?></option>
+						<option <?php if($new_user_role == 'contributor') {echo 'selected="selected"';} ?> value="contributor"><?php _e('Contributor','header-login'); ?></option>
+						<option <?php if($new_user_role == 'subscriber') {echo 'selected="selected"';} ?> value="subscriber"><?php _e('Subscriber','header-login'); ?></option>
 					</select>
 					<br/>
                                 </td>
@@ -322,10 +322,7 @@ function hl_user_login() {
         $auth_header = get_option('hl_authHeader', HL_AUTHHEADER);
         $create_new_user = get_option('hl_createNewUser', 0);
         $new_user_role = get_option('hl_defaultRole', HL_NEWUSERROLE);
-        $hl_logout_url = get_option('hl_logoutURL');
 
-	error_log($user_login_header);
-	
 	if(!is_user_logged_in() && (isset($headers[$user_login_header]) && ($headers[$user_login_header] != ""))) { //User logged into AM, but not WP
 		$errors = "";
 		error_log($headers[$user_login_header] . " is logged into AM, but not WP.  Logging them into WP...");
@@ -336,23 +333,40 @@ function hl_user_login() {
 		$user_lastname	  = $headers[$user_lastname_header];
 		$user_nicename	  = $headers[$user_nicename_header];
 		$user_displayname = $headers[$user_displayname_header];		
-
-		if($user_login) {
-			$user_id = username_exists($user_login); //Is is a valid, current WP user?
-
-			if(!$user_id && $create_new_user == 1) //Not a current WP user
-				{$userdata = hl_create_new_user($user_id, $user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role, true);}
-			else //Already a current WP user
-				{$userdata = hl_update_existing_user($user_id, $user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role, false);}
+		
+		if($create_new_user == 1) { //Create new user accounts? (1 = True, 0 = False)
+			if($user_login) {
+				$user_id = username_exists($user_login); //Is is a valid, current WP user?
+				if(!$user_id) //Not a current WP user
+					{$userdata = hl_create_new_user($user_id, $user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role, true);}
+				else //Already a current WP user
+					{$userdata = hl_update_existing_user($user_id, $user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role, false);}
 			
-			wp_authenticate($userdata->user_login, NULL);	
-			wp_set_auth_cookie($user_id, false); //Set the Authorization Cookie
-			wp_redirect($_SERVER['REQUEST_URI']); //Redirect back to current location
-			exit;
+				wp_authenticate($userdata->user_login, NULL);	
+				wp_set_auth_cookie($user_id, false); //Set the Authorization Cookie
+				wp_redirect($_SERVER['REQUEST_URI']); //Redirect back to current location
+				exit;
+			}
+			else if(empty($user_login))
+				{$errors->add('empty_username', __('<strong>ERROR</strong>: The username header is empty.'));}
 		}
-		else if(empty($user_login))
-			{$errors->add('empty_username', __('<strong>ERROR</strong>: The username header is empty.'));}
-	}		
+		else { //Don't create new user accounts.
+			if($user_login) {
+				$user_id = username_exists($user_login); //Valid, current WP user?
+				if($user_id) { //Already a WP user
+					$userdata = hl_update_existing_user($user_id, $user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role, false);
+					wp_authenticate($userdata->user_login, NULL);
+					wp_set_auth_cookie($user_id, false);
+					wp_redirect($_SERVER['REQUEST_URI']);
+					exit;
+				}
+				else {
+				 	$errors = __('<strong>Error</strong> Unauthorized Account');
+					error_log("Unauthorized account -> " . $user_login . ". Cannot create new users.");
+				}
+			}
+		}
+	}
 	else if(is_user_logged_in() && (!isset($headers[$user_login_header]) || ($headers[$user_login_header] == ""))) { //User logged into WP, but not AM
 		error_log($current_user->user_login . " is logged into WP, but not AM. Logging them out of WP...");
 		wp_logout();
