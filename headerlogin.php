@@ -39,6 +39,11 @@ define('HL_LOGOUTURL','AGLogout');
 
 //Activation Hook
 function hl_activation_hook() {
+	$redirect_to = $_SERVER['REQUEST_URI'] . "/wp-admin/options-general.php?page=headerlogin.php";
+	error_log($redirect_to);
+	//wp_redirect($redirect_to);
+	//exit;
+	
 	//Set Default Settings
 	if(isset($_POST['user-login-header']))
 		update_option('hl_userLogin_Header', $_POST['user-login-header']);
@@ -461,6 +466,7 @@ register_activation_hook(__FILE__, 'hl_activation_hook');
 
 //Deactivation Hook
 register_deactivation_hook(__FILE__, 'hl_deactivation_hook');
+
 
 //Action Hooks
 add_action('init', 'hl_user_login', 1);
