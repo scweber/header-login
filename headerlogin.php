@@ -269,7 +269,7 @@ function hl_plugin_menu() //Set up the plugin menu
 	
 //Create a new user with the Header Data
 function hl_create_new_user($user_id, $user_login, $email, $fname, $lname, $user_nicename, $user_displayname, $user_role, $setAsSubscriber) {
-	error_log("Creating New User...");
+	//error_log("Creating New User...");
 	//Populate the userdata array
 	$userdata = array(
 		'ID'		=> $user_id,
@@ -288,7 +288,7 @@ function hl_create_new_user($user_id, $user_login, $email, $fname, $lname, $user
 
 //Update the current user with the Header Data
 function hl_update_existing_user($user_id, $user_login, $email, $fname, $lname, $user_nicename, $user_displayname, $user_role, $setAsSubscriber) {
-	error_log("Updating Existing User...");
+	//error_log("Updating Existing User...");
 	//Populate the userdata array
 	$userdata = array(
 		'ID'            => $user_id,
@@ -325,7 +325,7 @@ function hl_user_login() {
 
 	if(!is_user_logged_in() && (isset($headers[$user_login_header]) && ($headers[$user_login_header] != ""))) { //User logged into AM, but not WP
 		$errors = "";
-		error_log($headers[$user_login_header] . " is logged into AM, but not WP.  Logging them into WP...");
+		//error_log($headers[$user_login_header] . " is logged into AM, but not WP.  Logging them into WP...");
 		
 		$user_login	  = $headers[$user_login_header];
 		$user_email	  = $headers[$user_email_header];
@@ -368,13 +368,13 @@ function hl_user_login() {
 		}
 	}
 	else if(is_user_logged_in() && (!isset($headers[$user_login_header]) || ($headers[$user_login_header] == ""))) { //User logged into WP, but not AM
-		error_log($current_user->user_login . " is logged into WP, but not AM. Logging them out of WP...");
+		//error_log($current_user->user_login . " is logged into WP, but not AM. Logging them out of WP...");
 		wp_logout();
 		wp_redirect($_SERVER['REQUEST_URI']);
 		exit;
 	}
 	else if(is_user_logged_in() && (isset($headers[$user_login_header]) && ($headers[$user_login_header] != ""))) { //User is logged into WP and AM	
-		error_log($headers[$user_login_header] . " is currently logged into AM and WP.");
+		//error_log($headers[$user_login_header] . " is currently logged into AM and WP.");
 		if(strpos($_SERVER['REQUEST_URI'], 'wp-login.php')) {
 			$redirect_to = str_replace('wp-login.php', '', $_SERVER['REQUEST_URI']);
 			wp_redirect($redirect_to);
@@ -382,7 +382,7 @@ function hl_user_login() {
 		}
 	}
 	else {
-		error_log("Nobody is logged into AM or WP");
+		//error_log("Nobody is logged into AM or WP");
 	}
 
 ?>
