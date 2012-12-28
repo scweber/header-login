@@ -38,17 +38,17 @@ function hl_activation_hook() {
 	add_site_option('Activated_Plugin', 'header-login');	
 	
 	//Set Default Settings
-	update_site_option('hl_userLogin_Header');
-	update_site_option('hl_userEmail_Header');
-	update_site_option('hl_authHeader');
+	update_site_option('hl_userLogin_Header', '');
+	update_site_option('hl_userEmail_Header'. '');
+	update_site_option('hl_userFirstname_Header', '');
+	update_site_option('hl_userLastname_Header', '');
+	update_site_option('hl_userNicename_Header', '');
+	update_site_option('hl_userDisplayname_Header', '');
+	update_site_option('hl_authHeader', '');
+	update_site_option('hl_createNewUser', '');
 	update_site_option('hl_defaultRole', HL_NEWUSERROLE);
-	update_site_option('hl_logoutURL');
-	update_site_option('hl_userFirstname_Header');
-	update_site_option('hl_userLastname_Header');
-	update_site_option('hl_userNicename_Header');
-	update_site_option('hl_userDisplayname_Header');
-	update_site_option('hl_createNewUser');
-	update_site_option('hl_settingsSaved');
+	update_site_option('hl_logoutURL', '');
+	update_site_option('hl_settingsSaved', '');
 }
 
 //Before loading the plugin, run the following redirect
@@ -57,7 +57,7 @@ function hl_load_plugin() {
 		delete_site_option('Activated_Plugin');
 		
 		if(is_multisite()) //Is multisite?
-			{$redirect_to = admin_url() . "settings.php?page=headerlogin.php"}
+			{$redirect_to = admin_url() . "settings.php?page=headerlogin.php";}
 		else
 			{$redirect_to = admin_url() . "options-general.php?page=headerlogin.php";}
         
