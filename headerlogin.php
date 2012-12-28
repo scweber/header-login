@@ -55,9 +55,14 @@ function hl_activation_hook() {
 function hl_load_plugin() {
 	if(is_admin() && get_site_option('Activated_Plugin') == 'header-login') {
 		delete_site_option('Activated_Plugin');
-		$redirect_to = admin_url() . "options-general.php?page=headerlogin.php";
-        	wp_redirect($redirect_to);
-	        exit;
+		
+		if(is_multisite()) //Is multisite?
+			{$redirect_to = admin_url() . "settings.php?page=headerlogin.php"}
+		else
+			{$redirect_to = admin_url() . "options-general.php?page=headerlogin.php";}
+        
+		wp_redirect($redirect_to);
+	    exit;
 	}
 }
 
@@ -324,15 +329,15 @@ function hl_authenticate_username($user, $username, $pass) {
 function hl_user_login() {
 	$headers = apache_request_headers(); //Get the headers present
 
-	$user_login_header = get_option('hl_userLogin_Header', HL_USERLOGIN);
-        $user_email_header = get_option('hl_userEmail_Header', HL_USEREMAIL);
-        $user_firstname_header = get_option('hl_userFirstname_Header');
-        $user_lastname_header = get_option('hl_userLastname_Header');
-        $user_nicename_header = get_option('hl_userNicename_Header');
-        $user_displayname_header = get_option('hl_userDisplayname_Header');
-        $auth_header = get_option('hl_authHeader', HL_AUTHHEADER);
-        $create_new_user = get_option('hl_createNewUser', 0);
-        $new_user_role = get_option('hl_defaultRole', HL_NEWUSERROLE);
+	$user_login_header = get_site_option('hl_userLogin_Header', HL_USERLOGIN);
+        $user_email_header = get_site_option('hl_userEmail_Header', HL_USEREMAIL);
+        $user_firstname_header = get_site_option('hl_userFirstname_Header');
+        $user_lastname_header = get_site_option('hl_userLastname_Header');
+        $user_nicename_header = get_site_option('hl_userNicename_Header');
+        $user_displayname_header = get_site_option('hl_userDisplayname_Header');
+        $auth_header = get_site_option('hl_authHeader', HL_AUTHHEADER);
+        $create_new_user = get_site_option('hl_createNewUser', 0);
+        $new_user_role = get_site_option('hl_defaultRole', HL_NEWUSERROLE);
 
 	if(!is_user_logged_in() && (isset($headers[$user_login_header]) && ($headers[$user_login_header] != ""))) { //User logged into AM, but not WP
 		$errors = "";
@@ -429,7 +434,7 @@ function hl_user_login() {
 function hl_admin_bar_render() {
 	global $wp_admin_bar;
 
-	$hl_logout_url = get_option('hl_logoutURL');
+	$hl_logout_url = get_site_option('hl_logoutURL');
 
 	$hl_logout_url = $_SERVER['SERVER_NAME'] . '/' . $hl_logout_url;
 
@@ -478,7 +483,7 @@ register_deactivation_hook(__FILE__, 'hl_deactivation_hook');
 add_action('admin_init', 'hl_load_plugin');
 add_action('admin_menu', 'hl_plugin_menu');
 
-$settingsSaved = get_option('hl_settingsSaved', 'false');
+$settingsSaved = get_site_option('hl_settingsSaved', 'false');
 error_log("Settings Saved: " . $settingsSaved);
 
 if($settingsSaved == true) {
