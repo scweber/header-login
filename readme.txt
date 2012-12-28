@@ -1,6 +1,5 @@
 === Header Login ===
 Contributors: scweber, MatthewEhle
-Donate link: http://example.com
 Tags: login, header
 Requires at least 3.4.2
 Tested up to: 3.5
