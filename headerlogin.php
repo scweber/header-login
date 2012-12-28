@@ -35,11 +35,9 @@ define('HL_NEWUSERROLE','subscriber');
 //Activation Hook
 function hl_activation_hook() {
 	
-	add_site_option('Activated_Plugin', 'header-login');	
-	
 	//Set Default Settings
 	update_site_option('hl_userLogin_Header', '');
-	update_site_option('hl_userEmail_Header'. '');
+	update_site_option('hl_userEmail_Header', '');
 	update_site_option('hl_userFirstname_Header', '');
 	update_site_option('hl_userLastname_Header', '');
 	update_site_option('hl_userNicename_Header', '');
@@ -49,21 +47,6 @@ function hl_activation_hook() {
 	update_site_option('hl_defaultRole', HL_NEWUSERROLE);
 	update_site_option('hl_logoutURL', '');
 	update_site_option('hl_settingsSaved', '');
-}
-
-//Before loading the plugin, run the following redirect
-function hl_load_plugin() {
-	if(is_admin() && get_site_option('Activated_Plugin') == 'header-login') {
-		delete_site_option('Activated_Plugin');
-		
-		if(is_multisite()) //Is multisite?
-			{$redirect_to = admin_url() . "settings.php?page=headerlogin.php";}
-		else
-			{$redirect_to = admin_url() . "options-general.php?page=headerlogin.php";}
-        
-		wp_redirect($redirect_to);
-	    exit;
-	}
 }
 
 //Deactivation Hook
@@ -278,7 +261,7 @@ function hl_menu() {
 //Set up Plugin Menu
 function hl_plugin_menu() {//Set up the plugin menu
 	if(is_multisite()) //Is multisite?
-		{add_submenu_page('settings.php',__('Header Login Options','header-login'),__('Header Login','header-login'),'edit_plugins',basename(__FILE__),'hl_menu');}
+		{add_submenu_page('settings.php',__('Header Login Options','header-login'),__('Header Login','header-login'),'manage_options','header-login','hl_menu');}
 	else
 		{add_submenu_page('options-general.php',__('Header Login Options','header-login'),__('Header Login','header-login'),'edit_plugins',basename(__FILE__),'hl_menu');}
 }
@@ -480,11 +463,10 @@ register_activation_hook(__FILE__, 'hl_activation_hook');
 register_deactivation_hook(__FILE__, 'hl_deactivation_hook');
 
 //Action Hooks
-add_action('admin_init', 'hl_load_plugin');
 add_action('admin_menu', 'hl_plugin_menu');
+add_action('network_admin_menu', 'hl_plugin_menu');
 
 $settingsSaved = get_site_option('hl_settingsSaved', 'false');
-error_log("Settings Saved: " . $settingsSaved);
 
 if($settingsSaved == true) {
 	add_action('init', 'hl_user_login', 1);
