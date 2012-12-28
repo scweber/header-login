@@ -3,7 +3,7 @@ Contributors: scweber, MatthewEhle
 Tags: login, header
 Requires at least 3.4.2
 Tested up to: 3.5
-Stable tag: 2.0
+Stable tag: 2.1
 
 Allow a user to be automatically logged into WordPress if their headers are present and valid.
 
