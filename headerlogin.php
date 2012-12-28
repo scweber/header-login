@@ -358,10 +358,10 @@ function hl_user_login() {
 					wp_redirect($_SERVER['REQUEST_URI']);
 					exit;
 				}
-				else {
+				/*else {
 				 	$errors = __('<strong>Error</strong> Unauthorized Account');
 					error_log("Unauthorized account -> " . $user_login . ". Cannot create new users.");
-				}
+				}*/
 			}
 		}
 	}
