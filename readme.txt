@@ -17,6 +17,7 @@ If not, then nothing is done and the user remains a guest to the blog.
 == Installation ==
 1. Upload `header-login` directory to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
+3. Set up and customize the plugin through the 'Settings' Menu
 
 == Changelog ==
 = 2.1 =
