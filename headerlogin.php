@@ -165,42 +165,42 @@ function hl_menu() {
 				</th>
 			</tr>
 			<tr valign-"top">
-				<th scope="row"><label for="user-login-header"><strong><?php _e('user_login*','header-login'); ?></strong></label></th>
+				<th scope="row"><label for="user-login-header"><strong><?php _e('Username*','header-login'); ?></strong></label></th>
 				<td>
 					<input type="text" name="user-login-header" id="user-login-header" value="<?php echo $user_login_header ?>" size="25" />
 					<br/>
 				</td>
 			</tr>
 			<tr valign-"top">
-				<th scope="row"><label for="user-email-header"><strong><?php _e('user_email*','header-login'); ?></strong></label></th>
+				<th scope="row"><label for="user-email-header"><strong><?php _e('E-mail*','header-login'); ?></strong></label></th>
 				<td>
 					<input type="text" name="user-email-header" id="user-email-header" value="<?php echo $user_email_header ?>" size="25" />
 					<br/>
 				</td>
 			</tr>
 			<tr valign-"top">
-				<th scope="row"><label for="user-firstname-header"><?php _e('first_name','header-login'); ?></label></th>
+				<th scope="row"><label for="user-firstname-header"><?php _e('First Name','header-login'); ?></label></th>
 				<td>
 					<input type="text" name="user-firstname-header" id="user-firstname-header" value="<?php echo $user_firstname_header ?>" size="25" />
 					<br/>
 				</td>
 			</tr>
 			<tr valign-"top">
-				<th scope="row"><label for="user-lastname-header"><?php _e('last_name','header-login'); ?></label></th>
+				<th scope="row"><label for="user-lastname-header"><?php _e('Last Name','header-login'); ?></label></th>
 				<td>
 					<input type="text" name="user-lastname-header" id="user-lastname-header" value="<?php echo $user_lastname_header ?>" size="25" />
 					<br/>
 				</td>
 			</tr>
 			<tr valign-"top">
-				<th scope="row"><label for="user-nicename-header"><?php _e('user_nicename','header-login'); ?></label></th>
+				<th scope="row"><label for="user-nicename-header"><?php _e('Nickname','header-login'); ?></label></th>
 				<td>
 					<input type="text" name="user-nicename-header" id="user-nicename-header" value="<?php echo $user_nicename_header ?>" size="25" />
 					<br/>
 				</td>
 			</tr>
 			<tr valign-"top">
-				<th scope="row"><label for="user-displayname-header"><?php _e('display_name','header-login'); ?></label></th>
+				<th scope="row"><label for="user-displayname-header"><?php _e('Displayname','header-login'); ?></label></th>
 				<td>
 					<input type="text" name="user-displayname-header" id="user-displayname-header" value="<?php echo $user_displayname_header ?>" size="25" />
 					<br/>
@@ -358,10 +358,6 @@ function hl_user_login() {
 					wp_redirect($_SERVER['REQUEST_URI']);
 					exit;
 				}
-				/*else {
-				 	$errors = __('<strong>Error</strong> Unauthorized Account');
-					error_log("Unauthorized account -> " . $user_login . ". Cannot create new users.");
-				}*/
 			}
 		}
 	}
