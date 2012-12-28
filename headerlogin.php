@@ -89,7 +89,7 @@ function hl_menu() {
 			update_site_option('hl_settingsSaved', 'false');
 
 			?> <div id="message" class="error">
-				<p><strong><?php _e('Error Saving Settings: Missing value for User Login Header, reset to default.') ?> </strong></p>
+				<p><strong><?php _e('Error Saving Settings: Missing value for User Login Header, reset to previously saved value.') ?> </strong></p>
 			</div>
 		<?php
 		}
@@ -98,7 +98,7 @@ function hl_menu() {
 			update_site_option('hl_settingsSaved', 'false');
 
 			?> <div id="message" class="error">
-				<p><strong><?php _e('Error Saving Settings: Missing value for User Email Header, reset to default.') ?> </strong></p>
+				<p><strong><?php _e('Error Saving Settings: Missing value for User Email Header, reset to previously saved value.') ?> </strong></p>
 			</div>
 		<?php
 		}
@@ -107,7 +107,7 @@ function hl_menu() {
 			update_site_option('hl_settingsSaved', 'false');
 
 			?> <div id="message" class="error">
-				<p><strong><?php _e('Error Saving Settings: Missing value for Authentication Header, reset to default.') ?> </strong></p>
+				<p><strong><?php _e('Error Saving Settings: Missing value for Authentication Header, reset to previously saved value.') ?> </strong></p>
 			</div>
 		<?php
 		}
@@ -116,7 +116,7 @@ function hl_menu() {
 			update_site_option('hl_settingsSaved', 'false');
 
 			?> <div id="message" class="error">
-				<p><strong><?php _e('Error Saving Settings: Missing value for Logout URL, reset to default.') ?> </strong></p>
+				<p><strong><?php _e('Error Saving Settings: Missing value for Logout URL, reset to previously saved value.') ?> </strong></p>
 			</div>
 		<?php
 		}
