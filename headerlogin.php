@@ -34,7 +34,6 @@ define('HL_NEWUSERROLE','subscriber');
 
 //Activation Hook
 function hl_activation_hook() {
-	
 	//Set Default Settings
 	update_site_option('hl_userLogin_Header', '');
 	update_site_option('hl_userEmail_Header', '');
