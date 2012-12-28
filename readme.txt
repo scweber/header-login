@@ -16,9 +16,8 @@ The plugin checks for valid headers.  If these headers are present then the user
 If not, then nothing is done and the user remains a guest to the blog.
 
 == Installation ==
-1. Set up Access Manager to pass X-cn, X-email for initial default login.
-2. Upload `header-login` directory to the `/wp-content/plugins/` directory
-3. Activate the plugin through the 'Plugins' menu in WordPress
+1. Upload `header-login` directory to the `/wp-content/plugins/` directory
+2. Activate the plugin through the 'Plugins' menu in WordPress
 
 == Changelog ==
 = 2.1 =
