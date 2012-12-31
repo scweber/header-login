@@ -9,7 +9,7 @@ Allow a user to be automatically logged into WordPress if their headers are pres
 
 == Description ==
 Header Login allows a user to be automatically logged into WordPress if they have previously logged into
-an Access Management Tool and have user-defined headers present.
+an Access Management Tool and have admin-defined headers present.
 
 The plugin checks for valid headers.  If these headers are present then the user is logged into WordPress.  
 If not, then nothing is done and the user remains a guest to the blog.
