@@ -2,7 +2,7 @@
 /**
  *
  * @package Header_Login
- * @version 2.1
+ * @version 2.2
  */
 /*
 Plugin Name: Header Login
@@ -10,7 +10,7 @@ Plugin URI: https://github.com/scweber/header-login
 Description: This plugin will automatically log a user into WordPress if they are logged into Access Manager.
 This allows for a user to log into Access Manager and then be automatically logged into Wordpress, without having to navigate to the Admin Console.
 Author: Scott Weber and Matthew Ehle
-Version: 2.1
+Version: 2.2
 Author URI: https://github.com/scweber
 */
 
@@ -123,16 +123,16 @@ function hl_menu() {
 	}
 
 	//Get the current values out of the database and fill in the view
-	$user_login_header = get_site_option('hl_userLogin_Header');
-        $user_email_header = get_site_option('hl_userEmail_Header');
-        $user_firstname_header = get_site_option('hl_userFirstname_Header');
-        $user_lastname_header = get_site_option('hl_userLastname_Header');
-        $user_nicename_header = get_site_option('hl_userNicename_Header');
-        $user_displayname_header = get_site_option('hl_userDisplayname_Header');
-        $auth_header = get_site_option('hl_authHeader');
-        $create_new_user = get_site_option('hl_createNewUser', 0);
-        $new_user_role = get_site_option('hl_defaultRole', HL_NEWUSERROLE);
-        $hl_logout_url = get_site_option('hl_logoutURL');
+	$user_login_header 		 = get_site_option('hl_userLogin_Header');
+	$user_email_header 		 = get_site_option('hl_userEmail_Header');
+	$user_firstname_header 	 = get_site_option('hl_userFirstname_Header');
+	$user_lastname_header 	 = get_site_option('hl_userLastname_Header');
+	$user_nicename_header 	 = get_site_option('hl_userNicename_Header');
+	$user_displayname_header = get_site_option('hl_userDisplayname_Header');
+	$auth_header 			 = get_site_option('hl_authHeader');
+	$create_new_user 		 = get_site_option('hl_createNewUser', 0);
+	$new_user_role 			 = get_site_option('hl_defaultRole', HL_NEWUSERROLE);
+	$hl_logout_url 			 = get_site_option('hl_logoutURL');
 	
 	$create_new_user_true = '';
 	$create_new_user_false = '';
@@ -270,13 +270,18 @@ function hl_create_new_user($user_id, $user_login, $email, $fname, $lname, $user
 	//error_log("Creating New User...");
 	//Populate the userdata array
 	$userdata = array(
-		'ID'		=> $user_id,
+		'ID'			=> $user_id,
 		'user_login' 	=> $user_login,
-		'user_email' 	=> $email,
-		'first_name' 	=> $fname,
-		'last_name'  	=> $lname,
-		'user_nicename' => $user_nicename,
-		'display_name' 	=> $user_displayname);
+		'user_email' 	=> $email);
+		
+	if($fname != "")
+		{$userdata['first_name']	=> $fname;}
+	if($lname != "")
+		{$userdata['last_name'] 	=> $lname;}
+	if($user_nicename != "")
+		{$userdata['user_nicename'] => $user_nicename;}
+	if($user_displayname != "")
+		{$userdata['display_name'] 	=> $user_displayname);}
 	if($setAsSubscriber)
 		{$userdata['role'] = $user_role;}	
 
@@ -289,13 +294,18 @@ function hl_update_existing_user($user_id, $user_login, $email, $fname, $lname, 
 	//error_log("Updating Existing User...");
 	//Populate the userdata array
 	$userdata = array(
-		'ID'            => $user_id,
-		'user_login'    => $user_login,
-		'user_email'    => $email,
-		'first_name'    => $fname,
-		'last_name'     => $lname,
-		'user_nicename' => $user_nicename,
-		'display_name'  => $user_displayname);
+		'ID'			=> $user_id,
+		'user_login' 	=> $user_login,
+		'user_email' 	=> $email);
+		
+	if($fname != "")
+		{$userdata['first_name']	=> $fname;}
+	if($lname != "")
+		{$userdata['last_name'] 	=> $lname;}
+	if($user_nicename != "")
+		{$userdata['user_nicename'] => $user_nicename;}
+	if($user_displayname != "")
+		{$userdata['display_name'] 	=> $user_displayname);}
 	if($setAsSubscriber)
 		{$userdata['role'] = $user_role;}
 
@@ -311,22 +321,22 @@ function hl_authenticate_username($user, $username, $pass) {
 function hl_user_login() {
 	$headers = apache_request_headers(); //Get the headers present
 
-	$user_login_header = get_site_option('hl_userLogin_Header', HL_USERLOGIN);
-        $user_email_header = get_site_option('hl_userEmail_Header', HL_USEREMAIL);
-        $user_firstname_header = get_site_option('hl_userFirstname_Header');
-        $user_lastname_header = get_site_option('hl_userLastname_Header');
-        $user_nicename_header = get_site_option('hl_userNicename_Header');
+	$user_login_header 			 = get_site_option('hl_userLogin_Header');
+        $user_email_header  	 = get_site_option('hl_userEmail_Header');
+        $user_firstname_header 	 = get_site_option('hl_userFirstname_Header');
+        $user_lastname_header 	 = get_site_option('hl_userLastname_Header');
+        $user_nicename_header 	 = get_site_option('hl_userNicename_Header');
         $user_displayname_header = get_site_option('hl_userDisplayname_Header');
-        $auth_header = get_site_option('hl_authHeader', HL_AUTHHEADER);
-        $create_new_user = get_site_option('hl_createNewUser', 0);
-        $new_user_role = get_site_option('hl_defaultRole', HL_NEWUSERROLE);
+        $auth_header 			 = get_site_option('hl_authHeader');
+        $create_new_user 		 = get_site_option('hl_createNewUser', 0);
+        $new_user_role 			 = get_site_option('hl_defaultRole', HL_NEWUSERROLE);
 
 	if(!is_user_logged_in() && (isset($headers[$user_login_header]) && ($headers[$user_login_header] != ""))) { //User logged into AM, but not WP
 		$errors = "";
 		//error_log($headers[$user_login_header] . " is logged into AM, but not WP.  Logging them into WP...");
 		
-		$user_login	  = $headers[$user_login_header];
-		$user_email	  = $headers[$user_email_header];
+		$user_login	  	  = $headers[$user_login_header];
+		$user_email	  	  = $headers[$user_email_header];
 		$user_firstname	  = $headers[$user_firstname_header];
 		$user_lastname	  = $headers[$user_lastname_header];
 		$user_nicename	  = $headers[$user_nicename_header];
@@ -443,7 +453,7 @@ function hl_admin_bar_render() {
 		'parent' => 'user-actions',
 		'id'     => 'edit-profile',
 		'title'  => __( 'Edit My Profile' ),
-		'href' => $profile_url,) );
+		'href' 	 => $profile_url,) );
 	$wp_admin_bar->add_menu( array(
 		'parent' => 'user-actions',
 		'id'     => 'logout',
