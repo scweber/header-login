@@ -281,7 +281,7 @@ function hl_create_new_user($user_id, $user_login, $email, $fname, $lname, $user
 	if($user_nicename != "")
 		{$userdata['user_nicename'] = $user_nicename;}
 	if($user_displayname != "")
-		{$userdata['display_name'] 	= $user_displayname);}
+		{$userdata['display_name'] 	= $user_displayname;}
 	if($setAsSubscriber)
 		{$userdata['role'] = $user_role;}	
 
@@ -305,7 +305,7 @@ function hl_update_existing_user($user_id, $user_login, $email, $fname, $lname, 
 	if($user_nicename != "")
 		{$userdata['user_nicename'] = $user_nicename;}
 	if($user_displayname != "")
-		{$userdata['display_name'] 	= $user_displayname);}
+		{$userdata['display_name'] 	= $user_displayname;}
 	if($setAsSubscriber)
 		{$userdata['role'] = $user_role;}
 
