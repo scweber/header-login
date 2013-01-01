@@ -1,9 +1,11 @@
 === Header Login ===
 Contributors: scweber, MatthewEhle
 Tags: login, header
-Requires at least 3.4.2
+Requires at least: 3.4.2
 Tested up to: 3.5
 Stable tag: 2.2
+License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Allow a user to be automatically logged into WordPress if their headers are present and valid.
 
@@ -17,6 +19,7 @@ If not, then nothing is done and the user remains a guest to the blog.
 == Installation ==
 1. Upload `header-login` directory to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
+3. Set up and customize the plugin through the 'Settings' Menu
 
 == Changelog ==
 = 2.2 =
