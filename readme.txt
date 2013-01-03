@@ -3,7 +3,7 @@ Contributors: scweber, MatthewEhle
 Tags: login, header
 Requires at least: 3.4.2
 Tested up to: 3.5
-Stable tag: 2.2
+Stable tag: 2.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -22,6 +22,13 @@ If not, then nothing is done and the user remains a guest to the blog.
 3. Set up and customize the plugin through the 'Settings' Menu
 
 == Changelog ==
+= 2.4= 
+Bug Fixes
+ - Some users not seeing the Admin Bar after logging in
+
+= 2.3 =
+Security Fixes
+
 = 2.2 =
 Do not update user info if header is blank
 

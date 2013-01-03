@@ -2,7 +2,7 @@
 /**
  *
  * @package Header_Login
- * @version 2.2
+ * @version 2.4
  */
 /*
 Plugin Name: Header Login
@@ -10,7 +10,7 @@ Plugin URI: https://github.com/scweber/header-login
 Description: This plugin will automatically log a user into WordPress if they are logged into Access Manager.
 This allows for a user to log into Access Manager and then be automatically logged into Wordpress, without having to navigate to the Admin Console.
 Author: Scott Weber and Matthew Ehle
-Version: 2.2
+Version: 2.4
 Author URI: https://github.com/scweber
 */
 
@@ -331,6 +331,11 @@ function hl_user_login() {
         $create_new_user 	 = get_site_option('hl_createNewUser', 0);
         $new_user_role 		 = get_site_option('hl_defaultRole', HL_NEWUSERROLE);
 
+	$current_user = wp_get_current_user();
+	if($current_user->user_login != $headers[$user_login_header])
+		{wp_logout();}
+
+	show_admin_bar(true);
 	if(!is_user_logged_in() && (isset($headers[$user_login_header]) && ($headers[$user_login_header] != ""))) { //User logged into AM, but not WP
 		$errors = "";
 		//error_log($headers[$user_login_header] . " is logged into AM, but not WP.  Logging them into WP...");
