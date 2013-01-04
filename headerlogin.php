@@ -293,12 +293,11 @@ function hl_create_new_user($user_id, $user_login, $email, $fname, $lname, $user
 	if($updateRole)
 		{$userdata['role'] = $user_role;}	
 
-	wp_insert_user($userdata);
-	
 	//If multi-site, add user to each blog
-	if(is_multisite()) {
-		hl_add_to_all_blogs($userdata);
-	}
+	if(is_multisite())
+		{hl_add_to_all_blogs($userdata);}
+	else
+		{wp_insert_user($userdata);}
 	
 	return $userdata;
 }//End hl_create_new_user
@@ -323,13 +322,7 @@ function hl_update_existing_user($user_id, $user_login, $email, $fname, $lname, 
 	if($updateRole)
 		{$userdata['role'] = $user_role;}
 
-	wp_update_user($userdata);
-	
-	//If multi-site, add user to each blog
-	if(is_multisite()) {
-		hl_add_to_all_blogs($userdata);
-	}
-	
+	wp_update_user($userdata);	
 	return $userdata;
 }//End hl_update_existing_user
 
