@@ -265,9 +265,17 @@ function hl_plugin_menu() {//Set up the plugin menu
 		{add_submenu_page('options-general.php',__('Header Login Options','header-login'),__('Header Login','header-login'),'edit_plugins',basename(__FILE__),'hl_menu');}
 }
 
+function hl_add_to_all_blogs($userdata) {
+	global $wpdb;
+	
+	$blogList = $wpdb->get_results("SELECT blog_id FROM " . $wpdb->blogs);
+	foreach($blogList as $blog)
+		{add_user_to_blog($blog->blog_id, $userdata['ID'], $userdata['role']);}
+}
+
 //Create a new user with the Header Data
-function hl_create_new_user($user_id, $user_login, $email, $fname, $lname, $user_nicename, $user_displayname, $user_role, $setAsSubscriber) {
-	//error_log("Creating New User...");
+function hl_create_new_user($user_id, $user_login, $email, $fname, $lname, $user_nicename, $user_displayname, $user_role, $updateRole) {
+	error_log("Creating New User...");
 	//Populate the userdata array
 	$userdata = array(
 		'ID'		=> $user_id,
@@ -282,16 +290,22 @@ function hl_create_new_user($user_id, $user_login, $email, $fname, $lname, $user
 		{$userdata['user_nicename'] = $user_nicename;}
 	if($user_displayname != "")
 		{$userdata['display_name'] = $user_displayname;}
-	if($setAsSubscriber)
+	if($updateRole)
 		{$userdata['role'] = $user_role;}	
 
 	wp_insert_user($userdata);
+	
+	//If multi-site, add user to each blog
+	if(is_multisite()) {
+		hl_add_to_all_blogs($userdata);
+	}
+	
 	return $userdata;
 }//End hl_create_new_user
 
 //Update the current user with the Header Data
-function hl_update_existing_user($user_id, $user_login, $email, $fname, $lname, $user_nicename, $user_displayname, $user_role, $setAsSubscriber) {
-	//error_log("Updating Existing User...");
+function hl_update_existing_user($user_id, $user_login, $email, $fname, $lname, $user_nicename, $user_displayname, $user_role, $updateRole) {
+	error_log("Updating Existing User...");
 	//Populate the userdata array
 	$userdata = array(
 		'ID'		=> $user_id,
@@ -306,10 +320,16 @@ function hl_update_existing_user($user_id, $user_login, $email, $fname, $lname, 
 		{$userdata['user_nicename'] = $user_nicename;}
 	if($user_displayname != "")
 		{$userdata['display_name'] = $user_displayname;}
-	if($setAsSubscriber)
+	if($updateRole)
 		{$userdata['role'] = $user_role;}
 
 	wp_update_user($userdata);
+	
+	//If multi-site, add user to each blog
+	if(is_multisite()) {
+		hl_add_to_all_blogs($userdata);
+	}
+	
 	return $userdata;
 }//End hl_update_existing_user
 
