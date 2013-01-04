@@ -3,7 +3,7 @@ Contributors: scweber, MatthewEhle
 Tags: login, header
 Requires at least: 3.4.2
 Tested up to: 3.5
-Stable tag: 2.6
+Stable tag: 2.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -22,14 +22,11 @@ If not, then nothing is done and the user remains a guest to the blog.
 3. Set up and customize the plugin through the 'Settings' Menu
 
 == Changelog ==
-= 2.6 =
-If option chosen to add new users and a multi-site, then users are added to each and every blog in network.
-
 = 2.5 =
 Bug Fixes
  - Blank Admin Bar appearing when not logged in.
 
-= 2.4= 
+= 2.4 = 
 Bug Fixes
  - Some users not seeing the Admin Bar after logging in
 

@@ -2,7 +2,7 @@
 /**
  *
  * @package Header_Login
- * @version 2.6
+ * @version 2.5
  */
 /*
 Plugin Name: Header Login
@@ -10,7 +10,7 @@ Plugin URI: https://github.com/scweber/header-login
 Description: This plugin will automatically log a user into WordPress if they are logged into Access Manager.
 This allows for a user to log into Access Manager and then be automatically logged into Wordpress, without having to navigate to the Admin Console.
 Author: Scott Weber and Matthew Ehle
-Version: 2.6
+Version: 2.5
 Author URI: https://github.com/scweber
 */
 
@@ -293,10 +293,11 @@ function hl_create_new_user($user_id, $user_login, $email, $fname, $lname, $user
 	if($updateRole)
 		{$userdata['role'] = $user_role;}	
 
-	wp_insert_user($userdata);
-	
-	if(is_multisite())  //If multi-site add new user to each blog
+	//If multi-site, add user to each blog
+	if(is_multisite())
 		{hl_add_to_all_blogs($userdata);}
+	else
+		{wp_insert_user($userdata);}
 	
 	return $userdata;
 }//End hl_create_new_user
