@@ -2,8 +2,8 @@
 Contributors: scweber, MatthewEhle
 Tags: login, header
 Requires at least: 3.4.2
-Tested up to: 3.5
-Stable tag: 2.6
+Tested up to: 3.5.1
+Stable tag: 2.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -18,12 +18,18 @@ If not, then nothing is done and the user remains a guest to the blog.
 
 If desired, a new user can be created on WordPress if authenticated through Access Management Tool.
 
+== Screenshots ==
+1. Settings Page
+
 == Installation ==
 1. Upload `header-login` directory to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
 3. Set up and customize the plugin through the 'Settings' Menu
 
 == Changelog ==
+= 2.7 =
+Fixed the issue of not adding new users to all blogs when user already on Network.
+
 = 2.6 =
 If option chosen to add new users and a multi-site, then users are added to each and every blog in network.
 
