@@ -267,7 +267,6 @@ function hl_plugin_menu() {//Set up the plugin menu
 
 function hl_add_to_all_blogs($userdata) {
 	global $wpdb;
-	
 	$blogList = $wpdb->get_results("SELECT blog_id FROM " . $wpdb->blogs);
 	foreach($blogList as $blog)
 		{add_user_to_blog($blog->blog_id, $userdata['ID'], $userdata['role']);}
@@ -275,7 +274,7 @@ function hl_add_to_all_blogs($userdata) {
 
 //Create a new user with the Header Data
 function hl_create_new_user($user_id, $user_login, $email, $fname, $lname, $user_nicename, $user_displayname, $user_role, $updateRole) {
-	error_log("Creating New User...");
+	error_log("Creating New User: " . $user_login . "with role: " . $user_role . "...");
 	//Populate the userdata array
 	$userdata = array(
 		'ID'		=> $user_id,
@@ -302,8 +301,8 @@ function hl_create_new_user($user_id, $user_login, $email, $fname, $lname, $user
 }//End hl_create_new_user
 
 //Update the current user with the Header Data
-function hl_update_existing_user($user_id, $user_login, $email, $fname, $lname, $user_nicename, $user_displayname, $user_role, $updateRole) {
-	error_log("Updating Existing User...");
+function hl_update_existing_user($user_id, $user_login, $email, $fname, $lname, $user_nicename, $user_displayname, $user_role) {
+	//error_log("Updating Existing User...");
 	//Populate the userdata array
 	$userdata = array(
 		'ID'		=> $user_id,
@@ -319,14 +318,18 @@ function hl_update_existing_user($user_id, $user_login, $email, $fname, $lname, 
 	if($user_displayname != "")
 		{$userdata['display_name'] = $user_displayname;}
 	
-	$user = new WP_User( $user_id );
-	$user_role = $user->roles[0];
+	global $wp_roles;
+	foreach($wp_roles->role_names as $role => $roleName) {
+		if(user_can($user_id, $role)) {
+			$user_role = $role;
+			break;
+		}
+	}
 	$userdata['role'] = $user_role;
-
 	wp_update_user($userdata);	
 
 	if(is_multisite())  //If multi-site add new user to each blog
-                {hl_add_to_all_blogs($userdata);}
+        {hl_add_to_all_blogs($userdata);}
 
 	return $userdata;
 }//End hl_update_existing_user
@@ -339,15 +342,15 @@ function hl_authenticate_username($user, $username, $pass) {
 function hl_user_login() {
 	$headers = apache_request_headers(); //Get the headers present
 
-	$user_login_header 	 = get_site_option('hl_userLogin_Header');
-        $user_email_header  	 = get_site_option('hl_userEmail_Header');
-        $user_firstname_header 	 = get_site_option('hl_userFirstname_Header');
-        $user_lastname_header 	 = get_site_option('hl_userLastname_Header');
-        $user_nicename_header 	 = get_site_option('hl_userNicename_Header');
-        $user_displayname_header = get_site_option('hl_userDisplayname_Header');
-        $auth_header 		 = get_site_option('hl_authHeader');
-        $create_new_user 	 = get_site_option('hl_createNewUser', 0);
-        $new_user_role 		 = get_site_option('hl_defaultRole', HL_NEWUSERROLE);
+	$user_login_header 	     = get_site_option('hl_userLogin_Header');
+    $user_email_header  	 = get_site_option('hl_userEmail_Header');
+    $user_firstname_header 	 = get_site_option('hl_userFirstname_Header');
+    $user_lastname_header 	 = get_site_option('hl_userLastname_Header');
+    $user_nicename_header 	 = get_site_option('hl_userNicename_Header');
+    $user_displayname_header = get_site_option('hl_userDisplayname_Header');
+    $auth_header 		     = get_site_option('hl_authHeader');
+    $create_new_user 	     = get_site_option('hl_createNewUser', 0);
+    $new_user_role 		     = get_site_option('hl_defaultRole', HL_NEWUSERROLE);
 
 	$current_user = wp_get_current_user();
 	if($current_user->user_login != $headers[$user_login_header])
@@ -373,7 +376,7 @@ function hl_user_login() {
 				if(!$user_id) //Not a current WP user
 					{$userdata = hl_create_new_user($user_id, $user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role, true);}
 				else //Already a current WP user
-					{$userdata = hl_update_existing_user($user_id, $user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role, false);}
+					{$userdata = hl_update_existing_user($user_id, $user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role);}
 			
 				wp_authenticate($userdata->user_login, NULL);	
 				wp_set_auth_cookie($user_id, false); //Set the Authorization Cookie
@@ -387,7 +390,7 @@ function hl_user_login() {
 			if($user_login) {
 				$user_id = username_exists($user_login); //Valid, current WP user?
 				if($user_id) { //Already a WP user
-					$userdata = hl_update_existing_user($user_id, $user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role, false);
+					$userdata = hl_update_existing_user($user_id, $user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role);
 					wp_authenticate($userdata->user_login, NULL);
 					wp_set_auth_cookie($user_id, false);
 					wp_redirect($_SERVER['REQUEST_URI']);
