@@ -44,6 +44,6 @@
 		echo "<h5>" . shell_exec("git add . -v 2>&1") . "</h5>";
 		echo "<h5>" . shell_exec("git commit -m '" . $message . "' -v 2>&1") . "</h5>";
 		echo "<h5>" . shell_exec("git push -v 2>&1") . "</h5>";
-		error_log('Performed git pull as user: ' . $current_user);
+		error_log('Performed git push as user: ' . $current_user . ' - ' . $message);
 	}
 ?>
