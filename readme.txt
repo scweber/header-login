@@ -3,7 +3,7 @@ Contributors: scweber, MatthewEhle
 Tags: login, header
 Requires at least: 3.4.2
 Tested up to: 3.5.1
-Stable tag: 2.7.2
+Stable tag: 2.7.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -27,6 +27,9 @@ If desired, a new user can be created on WordPress if authenticated through Acce
 3. Set up and customize the plugin through the 'Settings' Menu
 
 == Changelog ==
+= 2.7.3 =
+Fixed a bug that was overwriting the User-Defined Display Name nad Nicename
+
 = 2.7.2 = 
 Fixed another user role issue
 

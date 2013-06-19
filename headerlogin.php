@@ -2,7 +2,7 @@
 /**
  *
  * @package Header_Login
- * @version 2.7.2
+ * @version 2.7.3
  */
 /*
 Plugin Name: Header Login
@@ -10,7 +10,7 @@ Plugin URI: https://github.com/scweber/header-login
 Description: This plugin will automatically log a user into WordPress if they are logged into Access Manager.
 This allows for a user to log into Access Manager and then be automatically logged into Wordpress, without having to navigate to the Admin Console.
 Author: Scott Weber and Matthew Ehle
-Version: 2.7.2
+Version: 2.7.3
 Author URI: https://github.com/scweber
 */
 
@@ -375,9 +375,12 @@ function hl_user_login() {
 				$user_id = username_exists($user_login); //Is is a valid, current WP user?
 				if(!$user_id) //Not a current WP user
 					{$userdata = hl_create_new_user($user_id, $user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role, true);}
-				else //Already a current WP user
-					{$userdata = hl_update_existing_user($user_id, $user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role);}
-			
+				else { //Already a current WP user
+					$userInfo = get_userdata($user_id);
+					$user_displayname = $userInfo->display_name;
+					$user_nicename = $userInfo->user_nicename;
+					$userdata = hl_update_existing_user($user_id, $user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role);
+				}			
 				wp_authenticate($userdata->user_login, NULL);	
 				wp_set_auth_cookie($user_id, false); //Set the Authorization Cookie
 				wp_redirect($_SERVER['REQUEST_URI']); //Redirect back to current location
@@ -390,6 +393,9 @@ function hl_user_login() {
 			if($user_login) {
 				$user_id = username_exists($user_login); //Valid, current WP user?
 				if($user_id) { //Already a WP user
+					$userInfo = get_userdata($user_id);
+					$user_displayname = $userInfo->display_name;
+					$user_nicename = $userInfo->user_nicename;
 					$userdata = hl_update_existing_user($user_id, $user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role);
 					wp_authenticate($userdata->user_login, NULL);
 					wp_set_auth_cookie($user_id, false);

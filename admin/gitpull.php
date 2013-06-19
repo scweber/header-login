@@ -9,7 +9,7 @@
 		} else if (isset($_POST['pushChanges']) && $_POST['pushChanges'] != '') {
 			pushRevision($_POST['pushChanges'], $current_user);
 		} else if (isset($_POST['pushChanges']) && $_POST['pushChanges'] == '') {
-			echo "You must enter a commit message...";
+			echo "<p style='color:red;'>You must enter a commit message...</p>";
 			echo "<form action='gitpull.php' method='POST'>";
 				echo "<h4>Please enter a message for your commit: </h4>";
 				echo "<input type='text' size='50' name='pushChanges' id='pushChanges' value=''></input>";
