@@ -3,7 +3,7 @@ Contributors: scweber, MatthewEhle
 Tags: login, header, Access Manager, Single Sign-On, SSO
 Requires at least: 3.4.2
 Tested up to: 3.8.1
-Stable tag: 2.8.0
+Stable tag: 2.8.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -28,6 +28,10 @@ If desired, a new user can be created on WordPress if authenticated through Acce
 3. Set up and customize the plugin through the 'Settings' Menu
 
 == Changelog ==
+= 2.8.1 =
+Bug Fixes
+  -User's role was being overwritten in a single site
+
 = 2.8.0 =
 Bugfixes 
   -User's current role on multisite blog was being overridden by user's role on main site.  This did not allow for a user to have varying roles on a multisite install.
