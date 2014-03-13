@@ -3,7 +3,7 @@ Contributors: scweber, MatthewEhle
 Tags: login, header, Access Manager, Single Sign-On, SSO
 Requires at least: 3.4.2
 Tested up to: 3.8.1
-Stable tag: 2.8.1
+Stable tag: 2.8.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -28,15 +28,19 @@ If desired, a new user can be created on WordPress if authenticated through Acce
 3. Set up and customize the plugin through the 'Settings' Menu
 
 == Changelog ==
+= 2.8.2 = 
+Bug Fixes
+  - Minor fix to hide Role dropdown if Create New User is disabled
+
 = 2.8.1 =
 Bug Fixes
-  -User's role was being overwritten in a single site
+  - User's role was being overwritten in a single site
 
 = 2.8.0 =
 Bugfixes 
-  -User's current role on multisite blog was being overridden by user's role on main site.  This did not allow for a user to have varying roles on a multisite install.
+  - User's current role on multisite blog was being overridden by user's role on main site.  This did not allow for a user to have varying roles on a multisite install.
 Enhancement
-  -New multisite feature: Allow administrators to choose which subsites will automatically create new users and with what role.
+  - New multisite feature: Allow administrators to choose which subsites will automatically create new users and with what role.
 
 = 2.7.3 =
 Fixed a bug that was overwriting the User-Defined Display Name and Nicename

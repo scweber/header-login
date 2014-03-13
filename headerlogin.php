@@ -2,7 +2,7 @@
 /**
  *
  * @package Header_Login
- * @version 2.8.1
+ * @version 2.8.2
  */
 /*
 Plugin Name: Header Login
@@ -10,7 +10,7 @@ Plugin URI: https://github.com/scweber/header-login
 Description: This plugin will automatically log a user into WordPress if they are logged into Access Manager.
 This allows for a user to log into Access Manager and then be automatically logged into Wordpress, without having to navigate to the Admin Console.
 Author: Scott Weber and Matthew Ehle
-Version: 2.8.1
+Version: 2.8.2
 Author URI: https://github.com/scweber
 */
 
@@ -279,7 +279,7 @@ function hl_menu() {
                                         <input type="radio" name="create-new-user<?php echo $blog->blog_id; ?>" id="create-new-user-false" value="0" onclick="toggleNewUserRole(this.value, <?php echo $blog->blog_id; ?>)" <?php echo $create_new_user_false[$blog->blog_id] ?> /> <label for="create-new-user<?php $blog->blog_id; ?>-false"><?php _e('No','header-login'); ?></label>
                                     </td>
                                     <td class="blog-new-user-role">
-                                        <select name="new-user-role<?php echo $blog->blog_id; ?>" id="new-user-role<?php echo $blog->blog_id; ?>">
+                                        <select name="new-user-role<?php echo $blog->blog_id; ?>" id="new-user-role<?php echo $blog->blog_id; ?>" style="display:<?php echo $create_new_user[$blog->blog_id] == 1 ? block : none; ?>;">
                                             <option <?php if($new_user_role[$blog->blog_id] == 'administrator') {echo 'selected="selected"';} ?> value="administrator"><?php _e('Administrator','header-login'); ?></option>
                                             <option <?php if($new_user_role[$blog->blog_id] == 'editor') {echo 'selected="selected"';} ?> value="editor"><?php _e('Editor','header-login'); ?></option>
                                             <option <?php if($new_user_role[$blog->blog_id] == 'author') {echo 'selected="selected"';} ?> value="author"><?php _e('Author','header-login'); ?></option>
@@ -293,22 +293,17 @@ function hl_menu() {
                             <tr valign="top">
                                 <th scope="row"><label for="create-new-user"><?php _e('Automatically Create New Users','header-login'); ?></label></th>
                                 <td>
-                                    <input type="radio" name="create-new-user" id="create-new-user-true" value="1" <?php echo $create_new_user_true ?> /> <label for="create-new-user-true"><?php _e('Yes','header-login'); ?></label>
-                                    <input type="radio" name="create-new-user" id="create-new-user-false" value="0" <?php echo $create_new_user_false ?> /> <label for="create-new-user-false"><?php _e('No','header-login'); ?></label>
-                                    <br/>
+                                    <input type="radio" name="create-new-user" id="create-new-user-true" value="1" onclick="toggleNewUserRole(this.value, '')" <?php echo $create_new_user_true ?> /> <label for="create-new-user-true"><?php _e('Yes','header-login'); ?></label>
+                                    <input type="radio" name="create-new-user" id="create-new-user-false" value="0" onclick="toggleNewUserRole(this.value, '')" <?php echo $create_new_user_false ?> /> <label for="create-new-user-false"><?php _e('No','header-login'); ?></label>
                                 </td>
-                            </tr>
-                            <tr valign="top">
-                                <th scope="row"><label for="new-user-role"><?php _e('New Users Role','header-login'); ?></label></th>
                                 <td>
-                                    <select name="new-user-role" id="new-user-role">
+                                    <select name="new-user-role" id="new-user-role" style="display:<?php echo $create_new_user == 1 ? block : none; ?>;">
                                         <option <?php if($new_user_role == 'administrator') {echo 'selected="selected"';} ?> value="administrator"><?php _e('Administrator','header-login'); ?></option>
                                         <option <?php if($new_user_role == 'editor') {echo 'selected="selected"';} ?> value="editor"><?php _e('Editor','header-login'); ?></option>
                                         <option <?php if($new_user_role == 'author') {echo 'selected="selected"';} ?> value="author"><?php _e('Author','header-login'); ?></option>
                                         <option <?php if($new_user_role == 'contributor') {echo 'selected="selected"';} ?> value="contributor"><?php _e('Contributor','header-login'); ?></option>
                                         <option <?php if($new_user_role == 'subscriber') {echo 'selected="selected"';} ?> value="subscriber"><?php _e('Subscriber','header-login'); ?></option>
                                     </select>
-                                    <br/>
                                 </td>
                             </tr>
                         <?php endif; ?>
