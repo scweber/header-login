@@ -3,7 +3,7 @@ Contributors: scweber, MatthewEhle
 Tags: login, header, Access Manager, Single Sign-On, SSO
 Requires at least: 3.4.2
 Tested up to: 3.8.1
-Stable tag: 2.8.2
+Stable tag: 2.8.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -23,62 +23,83 @@ If desired, a new user can be created on WordPress if authenticated through Acce
 2. Settings Page for Multisite
 
 == Installation ==
-1. Upload `header-login` directory to the `/wp-content/plugins/` directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Set up and customize the plugin through the 'Settings' Menu
+= Automatic =
+1. Go to your admin area and select Plugins >> Add New from the menu
+2. Search for "Header Login"
+3. Click Install
+4. Click Activate (Network Activate on Multisite)
+5. Setup and customize the plugin through the "Settings" Menu (Network Settings Menu on Multisite)
+
+= Manual =
+1. Go to https://wordpress.org/plugins/header-login
+2. Download latest version of Simple Subscribe
+3. Unzip file into WordPress plugins directory
+4. Activate Plugin (Network Activate on Multisite)
+5. Setup and customize the plugin through the "Settings" Menu (Network Settings Menu on Multisite)
 
 == Changelog ==
+= 2.8.3 =
+Enhancements
+    * Keep settings on deactivation.  Settings are only removed upon uninstallation.
+
 = 2.8.2 = 
 Bug Fixes
-  - Minor fix to hide Role dropdown if Create New User is disabled
+    * Minor fix to hide Role dropdown if Create New User is disabled
 
 = 2.8.1 =
 Bug Fixes
-  - User's role was being overwritten in a single site
+    * User's role was being overwritten in a single site
 
 = 2.8.0 =
-Bugfixes 
-  - User's current role on multisite blog was being overridden by user's role on main site.  This did not allow for a user to have varying roles on a multisite install.
-Enhancement
-  - New multisite feature: Allow administrators to choose which subsites will automatically create new users and with what role.
+Bug Fixes
+    * User's current role on multisite blog was being overridden by user's role on main site.  This did not allow for a user to have varying roles on a multisite install
+Enhancements
+    * New multisite feature: Allow administrators to choose which subsites will automatically create new users and with what role
 
 = 2.7.3 =
-Fixed a bug that was overwriting the User-Defined Display Name and Nicename
+Bug Fixes
+    * Bug was overwriting the User-Defined Display Name and Nicename
 
 = 2.7.2 = 
-Fixed another user role issue
+Bug Fixes
+    * Another user role issue
 
 = 2.7.1 =
-Fixed an issue where the plugin was setting the user's role to null.
+Bug Fixes
+    * Issue where the plugin was setting the user's role to null
 
 = 2.7 =
-Fixed the issue of not adding new users to all blogs when user already on Network.
+Bug Fixes
+    * Issue of not adding new users to all blogs when user already on Network
 
 = 2.6 =
-If option chosen to add new users and a multi-site, then users are added to each and every blog in network.
+Enhancements
+    * If option chosen to add new users and a multi-site, then users are added to each and every blog in network
 
 = 2.5 =
 Bug Fixes
- - Blank Admin Bar appearing when not logged in.
+    * Blank Admin Bar appearing when not logged in
 
 = 2.4 = 
 Bug Fixes
- - Some users not seeing the Admin Bar after logging in.
+    * Some users not seeing the Admin Bar after logging in
 
 = 2.3 =
-Security Fixes.
+Security Fixes
 
 = 2.2 =
-Do not update user info if header is blank.
+Bug Fixes
+    * Do not update user info if header is blank
 
 = 2.1 =
-Multi-Site Support.
+Enhancements
+    * Multi-Site Support
 
 = 2.0 =
 MAJOR UPDATE!
-New Admin User Interface.
-Ability to set custom headers to use for creating and authenticating users.
-Can choose to automatically create new users.
+    * New Admin User Interface.
+    * Ability to set custom headers to use for creating and authenticating users
+    * Can choose to automatically create new users
 
 = 1.0 =
-This is the first release.
+This is the first release

@@ -2,7 +2,7 @@
 /**
  *
  * @package Header_Login
- * @version 2.8.2
+ * @version 2.8.3
  */
 /*
 Plugin Name: Header Login
@@ -10,7 +10,7 @@ Plugin URI: https://github.com/scweber/header-login
 Description: This plugin will automatically log a user into WordPress if they are logged into Access Manager.
 This allows for a user to log into Access Manager and then be automatically logged into Wordpress, without having to navigate to the Admin Console.
 Author: Scott Weber and Matthew Ehle
-Version: 2.8.2
+Version: 2.8.3
 Author URI: https://github.com/scweber
 */
 
@@ -32,61 +32,10 @@ Author URI: https://github.com/scweber
 //Default Values
 define('HL_NEWUSERROLE', 'subscriber');
 
-//Activation Hook
-function hl_activation_hook() {
-	//Set Default Settings
-	update_site_option('hl_userLogin_Header', '');
-	update_site_option('hl_userEmail_Header', '');
-	update_site_option('hl_userFirstname_Header', '');
-	update_site_option('hl_userLastname_Header', '');
-	update_site_option('hl_userNicename_Header', '');
-	update_site_option('hl_userDisplayname_Header', '');
-	update_site_option('hl_authHeader', '');
-	update_site_option('hl_logoutURL', '');
-	update_site_option('hl_settingsSaved', '');
-    
-        if(is_multisite()) {
-            global $wpdb; 
-            $blogList = $wpdb->get_results("SELECT blog_id, domain, path FROM ".$wpdb->blogs);
-            foreach($blogList as $blog) {
-                update_site_option('hl_createNewUser'.$blog->blog_id, '');
-                update_site_option('hl_defaultRole'.$blog->blog_id, HL_NEWUSERROLE);
-            }
-        } else {
-            update_site_option('hl_createNewUser', '');
-            update_site_option('hl_defaultRole', HL_NEWUSERROLE);
-        }
-} //End hl_activation_hook
-
-//Deactivation Hook
-function hl_deactivation_hook() {
-	delete_site_option('hl_userLogin_Header');
-	delete_site_option('hl_userEmail_Header');
-	delete_site_option('hl_userFirstname_Header');
-	delete_site_option('hl_userLastname_Header');
-	delete_site_option('hl_userNicename_Header');
-	delete_site_option('hl_userDisplayname_Header');
-	delete_site_option('hl_authHeader');
-	delete_site_option('hl_logoutURL');
-	delete_site_option('hl_settingsSaved');
-    
-        if(is_multisite()) {
-            global $wpdb; 
-            $blogList = $wpdb->get_results("SELECT blog_id, domain, path FROM ".$wpdb->blogs);
-            foreach($blogList as $blog) {
-                delete_site_option('hl_createNewUser'.$blog->blog_id);
-                delete_site_option('hl_defaultRole'.$blog->blog_id);
-            }
-        } else {
-            delete_site_option('hl_createNewUser');
-            delete_site_option('hl_defaultRole');
-        }
-} //End hl_deactivation_hook
-
 function hl_menu() {
     //Include the CSS and JS files
-    wp_enqueue_style('headerlogin-stylesheet', plugins_url('headerlogin.css', __FILE__));
-    wp_enqueue_script('headerlogin-javascript', plugins_url('headerlogin.js', __FILE__), jquery, '1.0', true);        
+    wp_enqueue_style('headerlogin-stylesheet', plugins_url('css/headerlogin.css', __FILE__));
+    wp_enqueue_script('headerlogin-javascript', plugins_url('js/headerlogin.js', __FILE__), array('jquery'), '1.0', true);        
 
     //If multisite, then get the blog IDs
     if(is_multisite()) {
@@ -121,32 +70,28 @@ function hl_menu() {
                 <p><strong><?php _e('Settings Saved') ?></strong></p>
             </div>
             <?php
-        }
-        else if($_POST['user-login-header'] == "") {
+        } else if($_POST['user-login-header'] == "") {
             update_site_option('hl_settingsSaved', 'false');
 
             ?> <div id="message" class="error">
                 <p><strong><?php _e('Error Saving Settings: Missing value for User Login Header, reset to previously saved value.') ?> </strong></p>
             </div>
             <?php
-        }
-        else if($_POST['user-email-header'] == "") {
+        } else if($_POST['user-email-header'] == "") {
             update_site_option('hl_settingsSaved', 'false');
 
             ?> <div id="message" class="error">
                 <p><strong><?php _e('Error Saving Settings: Missing value for User Email Header, reset to previously saved value.') ?> </strong></p>
             </div>
             <?php
-        }
-        else if($_POST['auth-header'] == "") {
+        } else if($_POST['auth-header'] == "") {
             update_site_option('hl_settingsSaved', 'false');
 
             ?> <div id="message" class="error">
                 <p><strong><?php _e('Error Saving Settings: Missing value for Authentication Header, reset to previously saved value.') ?> </strong></p>
             </div>
             <?php
-        }
-        else if($_POST['logout-url'] == "") {
+        } else if($_POST['logout-url'] == "") {
             update_site_option('hl_settingsSaved', 'false');
 
             ?> <div id="message" class="error">
@@ -204,7 +149,7 @@ function hl_menu() {
             <?php _e('The plugin will overwrite any current attributes, so if you wish to maintain the current value for a WordPress attribute, then leave the respective header field blank.'); ?>
         </p>
         <table class="form-table">
-            <tr valign-"top">
+            <tr valign="top">
                 <th>
                     <label for="wp-attribute"><strong><?php _e('WordPress Attribute','header-login'); ?></strong></label>
                     <td>
@@ -213,42 +158,42 @@ function hl_menu() {
                     </td>
                 </th>
             </tr>
-            <tr valign-"top">
+            <tr valign="top">
                 <th scope="row"><label for="user-login-header"><strong><?php _e('Username*','header-login'); ?></strong></label></th>
                 <td>
                     <input type="text" name="user-login-header" id="user-login-header" value="<?php echo $user_login_header ?>" size="25" />
                     <br/>
                 </td>
             </tr>
-            <tr valign-"top">
+            <tr valign="top">
                 <th scope="row"><label for="user-email-header"><strong><?php _e('E-mail*','header-login'); ?></strong></label></th>
                 <td>
                     <input type="text" name="user-email-header" id="user-email-header" value="<?php echo $user_email_header ?>" size="25" />
                     <br/>
                 </td>
             </tr>
-            <tr valign-"top">
+            <tr valign="top">
                 <th scope="row"><label for="user-firstname-header"><?php _e('First Name','header-login'); ?></label></th>
                 <td>
                     <input type="text" name="user-firstname-header" id="user-firstname-header" value="<?php echo $user_firstname_header ?>" size="25" />
                     <br/>
                 </td>
             </tr>
-            <tr valign-"top">
+            <tr valign="top">
                 <th scope="row"><label for="user-lastname-header"><?php _e('Last Name','header-login'); ?></label></th>
                 <td>
                     <input type="text" name="user-lastname-header" id="user-lastname-header" value="<?php echo $user_lastname_header ?>" size="25" />
                     <br/>
                 </td>
             </tr>
-            <tr valign-"top">
+            <tr valign="top">
                 <th scope="row"><label for="user-nicename-header"><?php _e('Nickname','header-login'); ?></label></th>
                 <td>
                     <input type="text" name="user-nicename-header" id="user-nicename-header" value="<?php echo $user_nicename_header ?>" size="25" />
                     <br/>
                 </td>
             </tr>
-            <tr valign-"top">
+            <tr valign="top">
                 <th scope="row"><label for="user-displayname-header"><?php _e('Displayname','header-login'); ?></label></th>
                 <td>
                     <input type="text" name="user-displayname-header" id="user-displayname-header" value="<?php echo $user_displayname_header ?>" size="25" />
@@ -487,11 +432,11 @@ function hl_user_login() {
     if(!is_user_logged_in() && (isset($headers[$user_login_header]) && ($headers[$user_login_header] != ""))) { //User logged into AM, but not WP
         $errors = "";
 
-        $user_login	  = $headers[$user_login_header];
-        $user_email	  = $headers[$user_email_header];
-        $user_firstname	  = $headers[$user_firstname_header];
-        $user_lastname	  = $headers[$user_lastname_header];
-        $user_nicename	  = $headers[$user_nicename_header];
+        $user_login = $headers[$user_login_header];
+        $user_email = $headers[$user_email_header];
+        $user_firstname = $headers[$user_firstname_header];
+        $user_lastname = $headers[$user_lastname_header];
+        $user_nicename = $headers[$user_nicename_header];
         $user_displayname = $headers[$user_displayname_header];
         
         if(is_multisite()) { 
@@ -598,10 +543,57 @@ function hl_admin_bar_render() {
 } //End hl_admin_bar_render
 
 //Activation Hook
-register_activation_hook(__FILE__, 'hl_activation_hook');
+function hl_activate() {
+	//Set Default Settings
+	update_site_option('hl_userLogin_Header', '');
+	update_site_option('hl_userEmail_Header', '');
+	update_site_option('hl_userFirstname_Header', '');
+	update_site_option('hl_userLastname_Header', '');
+	update_site_option('hl_userNicename_Header', '');
+	update_site_option('hl_userDisplayname_Header', '');
+	update_site_option('hl_authHeader', '');
+	update_site_option('hl_logoutURL', '');
+	update_site_option('hl_settingsSaved', '');
+    
+        if(is_multisite()) {
+            global $wpdb; 
+            $blogList = $wpdb->get_results("SELECT blog_id, domain, path FROM ".$wpdb->blogs);
+            foreach($blogList as $blog) {
+                update_site_option('hl_createNewUser'.$blog->blog_id, '');
+                update_site_option('hl_defaultRole'.$blog->blog_id, HL_NEWUSERROLE);
+            }
+        } else {
+            update_site_option('hl_createNewUser', '');
+            update_site_option('hl_defaultRole', HL_NEWUSERROLE);
+        }
+} //End hl_activation_hook
+register_activation_hook(__FILE__, 'hl_activate');
 
 //Deactivation Hook
-register_deactivation_hook(__FILE__, 'hl_deactivation_hook');
+function hl_uninstall() {
+	delete_site_option('hl_userLogin_Header');
+	delete_site_option('hl_userEmail_Header');
+	delete_site_option('hl_userFirstname_Header');
+	delete_site_option('hl_userLastname_Header');
+	delete_site_option('hl_userNicename_Header');
+	delete_site_option('hl_userDisplayname_Header');
+	delete_site_option('hl_authHeader');
+	delete_site_option('hl_logoutURL');
+	delete_site_option('hl_settingsSaved');
+    
+        if(is_multisite()) {
+            global $wpdb; 
+            $blogList = $wpdb->get_results("SELECT blog_id, domain, path FROM ".$wpdb->blogs);
+            foreach($blogList as $blog) {
+                delete_site_option('hl_createNewUser'.$blog->blog_id);
+                delete_site_option('hl_defaultRole'.$blog->blog_id);
+            }
+        } else {
+            delete_site_option('hl_createNewUser');
+            delete_site_option('hl_defaultRole');
+        }
+} //End hl_deactivation_hook
+register_uninstall_hook(__FILE__, 'hl_uninstall');
 
 //Action Hooks
 add_action('admin_menu', 'hl_plugin_menu');
