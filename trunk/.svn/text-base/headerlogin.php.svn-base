@@ -2,7 +2,7 @@
 /**
  *
  * @package Header_Login
- * @version 2.8.4
+ * @version 2.8.5
  */
 /*
 Plugin Name: Header Login
@@ -10,7 +10,7 @@ Plugin URI: https://github.com/scweber/header-login
 Description: This plugin will automatically log a user into WordPress if they are logged into Access Manager.
 This allows for a user to log into Access Manager and then be automatically logged into Wordpress, without having to navigate to the Admin Console.
 Author: Scott Weber and Matthew Ehle
-Version: 2.8.4
+Version: 2.8.5
 Author URI: https://github.com/scweber
 */
 
@@ -293,31 +293,20 @@ function hl_add_to_blog($userdata, $blog_id, $new_user) {
                 $userdata['role'] = $role;
             }
         }
-        //error_log("Role for Blog ".$blog_id." is ".$userdata['role']);
         wp_update_user($userdata);
-	add_user_to_blog($blog_id, $userdata['ID'], $userdata['role']);
+        add_user_to_blog($blog_id, $userdata['ID'], $userdata['role']);
     } else if(!is_multisite() && $new_user == 0){
-	$user = get_userdata($userdata['ID']);
-	$userdata['role'] = implode(', ', $user->roles);
+        $user = get_userdata($userdata['ID']);
+        $userdata['role'] = implode(', ', $user->roles);
         wp_update_user($userdata);
     }
 } //End hl_add_to_blog
 
 //Create User
 function hl_create_user ($user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role, $blog_id) {
-    if($user_login) { // The user login header is present
-        $user_id = username_exists($user_login); //Is is a valid, current WP user?
-        if(!$user_id) { //Not a current WP user
-            $userdata = hl_create_new_user($user_id, $user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role, $blog_id);
-            wp_authenticate($userdata->user_login, NULL);
-            wp_set_auth_cookie($user_id, false); //Set the Authorization Cookie
-        } else { //Already a current WP user
-            hl_update_user($user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role, $blog_id);
-        }
-        
-    } else if(empty($user_login)) {
-        $errors->add('empty_username', __('<strong>ERROR</strong>: The username header is empty.'));
-    }
+    $userdata = hl_create_new_user($user_id, $user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role, $blog_id);
+    wp_authenticate($userdata->user_login, NULL);
+    wp_set_auth_cookie($user_id, false); //Set the Authorization Cookie
 } //End hl_create_user
 
 //Create a new user with the Header Data
@@ -350,17 +339,9 @@ function hl_create_new_user($user_id, $user_login, $email, $fname, $lname, $user
 
 //Update User
 function hl_update_user($user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role, $blog_id) {
-    if($user_login) {
-        $user_id = username_exists($user_login); //Valid, current WP user?
-        if($user_id) { //Already a WP user
-            $userInfo = get_userdata($user_id);
-            $user_displayname = $userInfo->display_name;
-            $user_nicename = $userInfo->user_nicename;
-            $userdata = hl_update_existing_user($user_id, $user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role, $blog_id);
-            wp_authenticate($userdata->user_login, NULL);
-            wp_set_auth_cookie($user_id, false);
-        }
-    }
+    $userdata = hl_update_existing_user($user_id, $user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role, $blog_id);
+    wp_authenticate($userdata->user_login, NULL);
+    wp_set_auth_cookie($user_id, false);
 } //End hl_update_user
 
 //Update the current user with the Header Data
@@ -439,23 +420,45 @@ function hl_user_login() {
         $user_nicename = $headers[$user_nicename_header];
         $user_displayname = $headers[$user_displayname_header];
         
-        if(is_multisite()) { 
-            foreach($blogList as $blog) { // Is multisite, so need to loop through each blog
-                if($create_new_user[$blog->blog_id] == 1) { //Create new user accounts? (1 = True, 0 = False)
-                    hl_create_user($user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role[$blog->blog_id], $blog->blog_id);
-                } else { //Don't create new user accounts.
-                    hl_update_user($user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role[$blog->blog_id], $blog->blog_id);
+        if($user_login) {
+            $user_id = username_exists($user_login);
+            if($user_id) { // Already a WP User
+                $userInfo = get_userdata($user_id);
+                $user_displayname = $userInfo->display_name;
+                $user_nicename = $userInfo->user_nicename;
+                if(!is_multisite()) {
+                    hl_update_user($user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role, 0);
+                } else {
+                    foreach($blogList as $blog) {
+                       if($create_new_user[$blog->blog_id] == 1) {
+                           hl_create_user($user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role[$blog->blog_id], $blog->blog_id);
+                       } else {
+                           hl_update_user($user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role[$blog->blog_id], $blog->blog_id);
+                       }
+                    }
+                }
+                wp_redirect($_SERVER['REQUEST_URI']); //Redirect back to current location
+                exit;
+            } else {
+                if(!is_multisite()) {
+                    if($create_new_user == 1) {
+                        hl_create_user($user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role, 0);
+                        wp_redirect($_SERVER['REQUEST_URI']); //Redirect back to current location
+                        exit;
+                    }
+                } else {
+                    foreach($blogList as $blog) {
+                       if($create_new_user[$blog->blog_id] == 1) {
+                           hl_create_user($user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role[$blog->blog_id], $blog->blog_id);
+                       }
+                    }
+                    if(array_search(1, $create_new_user)) {
+                        wp_redirect($_SERVER['REQUEST_URI']); //Redirect back to current location
+                        exit;
+                    }
                 }
             }
-        } else {
-            if($create_new_user == 1) { //Create new user accounts? (1 = True, 0 = False)
-                hl_create_user($user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role, 0);
-            } else {
-                hl_update_user($user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role, 0);
-            }
         }
-        wp_redirect($_SERVER['REQUEST_URI']); //Redirect back to current location
-        exit;
     } else if(is_user_logged_in() && (!isset($headers[$user_login_header]) || ($headers[$user_login_header] == ""))) { //User logged into WP, but not AM
         wp_logout();
         wp_redirect($_SERVER['REQUEST_URI']);

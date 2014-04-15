@@ -3,7 +3,7 @@ Contributors: scweber, mehle
 Tags: login, header, Access Manager, Single Sign-On, SSO
 Requires at least: 3.0
 Tested up to: 3.8.1
-Stable tag: 2.8.4
+Stable tag: 2.8.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -36,6 +36,10 @@ If desired, a new user can be created on WordPress automatically if authenticate
 5. Setup and customize the plugin through the "Settings" Menu (Network Settings Menu on Multisite)
 
 == Changelog ==
+= 2.8.5 =
+* **Bug Fixes**
+  * If authenticated user did not have a WordPress account and setting was disabled to create new accounts, user was caught in a redirect loop.
+
 = 2.8.4 =
 * **Bug Fixes**
   * Add Domain to Path in list of sites when on a MultiSite Install.  This fix is for Domain Based Multi-site installations.
