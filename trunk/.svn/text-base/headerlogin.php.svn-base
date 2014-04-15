@@ -2,7 +2,7 @@
 /**
  *
  * @package Header_Login
- * @version 2.8.5
+ * @version 2.8.6
  */
 /*
 Plugin Name: Header Login
@@ -10,7 +10,7 @@ Plugin URI: https://github.com/scweber/header-login
 Description: This plugin will automatically log a user into WordPress if they are logged into Access Manager.
 This allows for a user to log into Access Manager and then be automatically logged into Wordpress, without having to navigate to the Admin Console.
 Author: Scott Weber and Matthew Ehle
-Version: 2.8.5
+Version: 2.8.6
 Author URI: https://github.com/scweber
 */
 
@@ -303,10 +303,11 @@ function hl_add_to_blog($userdata, $blog_id, $new_user) {
 } //End hl_add_to_blog
 
 //Create User
-function hl_create_user ($user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role, $blog_id) {
+function hl_create_user ($user_id, $user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role, $blog_id) {
     $userdata = hl_create_new_user($user_id, $user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role, $blog_id);
     wp_authenticate($userdata->user_login, NULL);
     wp_set_auth_cookie($user_id, false); //Set the Authorization Cookie
+    show_admin_bar(true);
 } //End hl_create_user
 
 //Create a new user with the Header Data
@@ -338,10 +339,11 @@ function hl_create_new_user($user_id, $user_login, $email, $fname, $lname, $user
 } //End hl_create_new_user
 
 //Update User
-function hl_update_user($user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role, $blog_id) {
+function hl_update_user($user_id, $user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role, $blog_id) {
     $userdata = hl_update_existing_user($user_id, $user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role, $blog_id);
     wp_authenticate($userdata->user_login, NULL);
     wp_set_auth_cookie($user_id, false);
+    show_admin_bar(true);
 } //End hl_update_user
 
 //Update the current user with the Header Data
@@ -406,10 +408,6 @@ function hl_user_login() {
         wp_logout();
     }
 
-    if(is_user_logged_in()) {
-        show_admin_bar(true);
-    }
-
     if(!is_user_logged_in() && (isset($headers[$user_login_header]) && ($headers[$user_login_header] != ""))) { //User logged into AM, but not WP
         $errors = "";
 
@@ -427,13 +425,14 @@ function hl_user_login() {
                 $user_displayname = $userInfo->display_name;
                 $user_nicename = $userInfo->user_nicename;
                 if(!is_multisite()) {
-                    hl_update_user($user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role, 0);
+                    hl_update_user($user_id, $user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role, 0);
                 } else {
+                    error_log('Multisite');
                     foreach($blogList as $blog) {
-                       if($create_new_user[$blog->blog_id] == 1) {
-                           hl_create_user($user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role[$blog->blog_id], $blog->blog_id);
+                       if(!is_user_member_of_blog($user_id, $blog->blog_id) && $create_new_user[$blog->blog_id] == 1) {
+                           hl_create_user($user_id, $user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role[$blog->blog_id], $blog->blog_id);
                        } else {
-                           hl_update_user($user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role[$blog->blog_id], $blog->blog_id);
+                           hl_update_user($user_id, $user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role[$blog->blog_id], $blog->blog_id);
                        }
                     }
                 }
@@ -442,14 +441,14 @@ function hl_user_login() {
             } else {
                 if(!is_multisite()) {
                     if($create_new_user == 1) {
-                        hl_create_user($user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role, 0);
+                        hl_create_user($user_id, $user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role, 0);
                         wp_redirect($_SERVER['REQUEST_URI']); //Redirect back to current location
                         exit;
                     }
                 } else {
                     foreach($blogList as $blog) {
-                       if($create_new_user[$blog->blog_id] == 1) {
-                           hl_create_user($user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role[$blog->blog_id], $blog->blog_id);
+                       if(!is_user_member_of_blog($user_id, $blog->blog_id) && $create_new_user[$blog->blog_id] == 1) {
+                           hl_create_user($user_id, $user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role[$blog->blog_id], $blog->blog_id);
                        }
                     }
                     if(array_search(1, $create_new_user)) {
