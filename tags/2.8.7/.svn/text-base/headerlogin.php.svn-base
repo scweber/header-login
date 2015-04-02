@@ -2,7 +2,7 @@
 /**
  *
  * @package Header_Login
- * @version 2.8.7
+ * @version 2.8.6
  */
 /*
 Plugin Name: Header Login
@@ -10,7 +10,7 @@ Plugin URI: https://github.com/scweber/header-login
 Description: This plugin will automatically log a user into WordPress if they are logged into Access Manager.
 This allows for a user to log into Access Manager and then be automatically logged into Wordpress, without having to navigate to the Admin Console.
 Author: Scott Weber and Matthew Ehle
-Version: 2.8.7
+Version: 2.8.6
 Author URI: https://github.com/scweber
 */
 
@@ -380,6 +380,7 @@ function hl_authenticate_username($user, $username, $pass) {
 
 function hl_user_login() {
     $headers = apache_request_headers(); //Get the headers present
+    
     if(is_multisite()) {
         global $wpdb;
         $blogList = $wpdb->get_results("SELECT blog_id FROM " . $wpdb->blogs);
@@ -403,14 +404,14 @@ function hl_user_login() {
     }
 
     $current_user = wp_get_current_user();
-    if(strtolower($current_user->user_login) !== strtolower($headers[$user_login_header])) {
+    if($current_user->user_login != $headers[$user_login_header]) {
         wp_logout();
     }
 
     if(!is_user_logged_in() && (isset($headers[$user_login_header]) && ($headers[$user_login_header] != ""))) { //User logged into AM, but not WP
         $errors = "";
 
-        $user_login = strtolower($headers[$user_login_header]);
+        $user_login = $headers[$user_login_header];
         $user_email = $headers[$user_email_header];
         $user_firstname = $headers[$user_firstname_header];
         $user_lastname = $headers[$user_lastname_header];
