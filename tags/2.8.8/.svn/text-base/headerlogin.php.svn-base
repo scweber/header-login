@@ -2,7 +2,7 @@
 /**
  *
  * @package Header_Login
- * @version 2.8.8
+ * @version 2.8.6
  */
 /*
 Plugin Name: Header Login
@@ -10,7 +10,7 @@ Plugin URI: https://github.com/scweber/header-login
 Description: This plugin will automatically log a user into WordPress if they are logged into Access Manager.
 This allows for a user to log into Access Manager and then be automatically logged into Wordpress, without having to navigate to the Admin Console.
 Author: Scott Weber and Matthew Ehle
-Version: 2.8.8
+Version: 2.8.6
 Author URI: https://github.com/scweber
 */
 
@@ -305,9 +305,8 @@ function hl_add_to_blog($userdata, $blog_id, $new_user) {
 //Create User
 function hl_create_user ($user_id, $user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role, $blog_id) {
     $userdata = hl_create_new_user($user_id, $user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role, $blog_id);
-    wp_authenticate($userdata['user_login'], NULL);
+    wp_authenticate($userdata->user_login, NULL);
     wp_set_auth_cookie($user_id, false); //Set the Authorization Cookie
-    do_action('wp_login', $userdata['user_login'], new WP_User($userdata['ID']));
     show_admin_bar(true);
 } //End hl_create_user
 
@@ -342,9 +341,8 @@ function hl_create_new_user($user_id, $user_login, $email, $fname, $lname, $user
 //Update User
 function hl_update_user($user_id, $user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role, $blog_id) {
     $userdata = hl_update_existing_user($user_id, $user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role, $blog_id);
-    wp_authenticate($userdata['user_login'], NULL);
+    wp_authenticate($userdata->user_login, NULL);
     wp_set_auth_cookie($user_id, false);
-    do_action('wp_login', $userdata['user_login'], new WP_User($userdata['ID']));
     show_admin_bar(true);
 } //End hl_update_user
 
@@ -376,13 +374,13 @@ function hl_update_existing_user($user_id, $user_login, $email, $fname, $lname, 
 } //End hl_update_existing_user
 
 function hl_authenticate_username($user, $username, $pass) {
-    $user = new WP_User($user['ID']);
+    $user = new WP_User($user->ID);
     return $user;
 } //End hl_authenticate_username
 
 function hl_user_login() {
-    $errors = "";
     $headers = apache_request_headers(); //Get the headers present
+    
     if(is_multisite()) {
         global $wpdb;
         $blogList = $wpdb->get_results("SELECT blog_id FROM " . $wpdb->blogs);
@@ -406,12 +404,14 @@ function hl_user_login() {
     }
 
     $current_user = wp_get_current_user();
-    if(strtolower($current_user->user_login) !== strtolower($headers[$user_login_header])) {
+    if($current_user->user_login != $headers[$user_login_header]) {
         wp_logout();
     }
 
     if(!is_user_logged_in() && (isset($headers[$user_login_header]) && ($headers[$user_login_header] != ""))) { //User logged into AM, but not WP
-        $user_login = strtolower($headers[$user_login_header]);
+        $errors = "";
+
+        $user_login = $headers[$user_login_header];
         $user_email = $headers[$user_email_header];
         $user_firstname = $headers[$user_firstname_header];
         $user_lastname = $headers[$user_lastname_header];
@@ -427,6 +427,7 @@ function hl_user_login() {
                 if(!is_multisite()) {
                     hl_update_user($user_id, $user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role, 0);
                 } else {
+                    error_log('Multisite');
                     foreach($blogList as $blog) {
                        if(!is_user_member_of_blog($user_id, $blog->blog_id) && $create_new_user[$blog->blog_id] == 1) {
                            hl_create_user($user_id, $user_login, $user_email, $user_firstname, $user_lastname, $user_nicename, $user_displayname, $new_user_role[$blog->blog_id], $blog->blog_id);
