@@ -1,9 +1,0 @@
-/* 
-    Created on : Mar 11, 2014, 4:00:08 PM
-    Author     :  scweber (Scott Weber)
-*/
-/*@media="all"*/
-.form-table th { width: 15%; }
-.form-table td { margin: 9px; padding: 2px 15px; text-align: left; }
-.form-table td.blog-path { width: 2%; }
-.form-table td.blog-create-new-user { width: 1%; }
